@@ -210,9 +210,10 @@
   <div class="syncgrid">
     <div class="col">
       <h3>Backup</h3>
-      <p class="hint">Export your list to a file, or import one you exported from another browser.</p>
+      <p class="hint">Export your list as data, or as a complete standalone page with your current list built in. Import loads a data export.</p>
       <div class="rowbtns">
         <button class="btn small" id="export">Export</button>
+        <button class="btn small" id="exportHtml" title="Download this page with your current list baked in as the starter">Export as HTML</button>
         <label class="btn small">Import <input id="import" type="file" accept="application/json,.json" hidden></label>
       </div>
     </div>
@@ -239,6 +240,7 @@
 
 <script>
 (() => {
+  const TEMPLATE = '<!doctype html>\n' + document.documentElement.outerHTML; // clean copy, captured before render
   const KEY = 'runway:state:v1';
 
   const SEED = [
@@ -340,6 +342,14 @@
     }
     if (!r.ok) throw new Error(r.status === 401 ? 'token rejected' : r.status === 403 ? 'no write access' : 'HTTP ' + r.status);
     const j = await r.json(); sync.sha = j.content && j.content.sha;
+  }
+  async function checkRepo() {
+    const r = await fetch(`https://api.github.com/repos/${sync.repo}`, { headers: hdrs() });
+    if (r.status === 401) throw new Error('token rejected. It may be expired, deleted, or pasted wrong');
+    if (r.status === 404) throw new Error('GitHub cannot see that repo with this token. Check the exact repo name, and that the token was created with access to this specific repo (fine-grained tokens set to Public repositories cannot see a private one)');
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    const j = await r.json();
+    if (!(j.permissions && j.permissions.push)) throw new Error('token can read the repo but not write to it. Set Contents to Read and write');
   }
   const stripOpen = () => { const { open, ...rest } = state; return rest; };
 
@@ -629,7 +639,20 @@
     };
     rd.readAsText(file);
   }
+  function exportHTML() {
+    const items = state.items.map(({ id, ...rest }) => rest);
+    const seedText = 'const SEED = ' + JSON.stringify(items, null, 2).replace(/\n/g, '\n  ') + ';';
+    if (!/const SEED = \[[\s\S]*?\];/.test(TEMPLATE)) { setStatus('Could not build the HTML export.'); return; }
+    const html = TEMPLATE
+      .replace(/const SEED = \[[\s\S]*?\];/, seedText)
+      .replace(/let state = \{ items: \[\], hpd: [^,]+, wknd: [^,]+,/, `let state = { items: [], hpd: ${+state.hpd || 8}, wknd: ${!!state.wknd},`);
+    const blob = new Blob([html], { type: 'text/html' });
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+    a.download = 'index.html'; a.click(); URL.revokeObjectURL(a.href);
+    setStatus('Exported index.html with your current list as the starter.');
+  }
   document.getElementById('export').onclick = exportJSON;
+  document.getElementById('exportHtml').onclick = exportHTML;
   document.getElementById('import').onchange = e => { if (e.target.files[0]) importJSON(e.target.files[0]); e.target.value = ''; };
 
   document.getElementById('syncSave').onclick = async () => {
@@ -638,6 +661,7 @@
     if (!syncReady()) { setSync('Enter both the repo and a token.'); return; }
     saveSyncCfg(); setSync('Connecting…');
     try {
+      await checkRepo();
       const remote = await pull();
       if (remote && Array.isArray(remote.items) && remote.items.length) {
         if (confirm('A list already exists on GitHub. Load it here and replace this browser\'s copy?')) {
