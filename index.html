@@ -1,6 +1,5 @@
 <!doctype html>
-<html lang="en">
-<head>
+<html lang="en"><head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Runway</title>
@@ -214,7 +213,7 @@
       <div class="rowbtns">
         <button class="btn small" id="export">Export</button>
         <button class="btn small" id="exportHtml" title="Download this page with your current list baked in as the starter">Export as HTML</button>
-        <label class="btn small">Import <input id="import" type="file" accept="application/json,.json" hidden></label>
+        <label class="btn small">Import <input id="import" type="file" accept="application/json,.json" hidden=""></label>
       </div>
     </div>
     <div class="col">
@@ -244,42 +243,294 @@
   const KEY = 'runway:state:v1';
 
   const SEED = [
-    {t:'GSG testimonial, Friday 3:30', c:'GSG / Chris Savage', l:'video', h:4,  s:'active', n:'MKE 600 primary, DJI Mic Mini as safety. Interview only.'},
-    {t:'Kalil / Stoney Pond', c:'Mike Johnson', l:'render', h:16, s:'active', n:'Mike is waiting on you. Refine after his green-light on the rotated pool and pavilion.'},
-    {t:'Doukas redesign', c:'Konstantinos Doukas', l:'render', h:24, s:'active', n:'Deposit paid. Pavilion style first for feedback, then layout, then renders.'},
-    {t:'Singh Brothers revisions', c:'PJE / Shea', l:'render', h:16, s:'active', n:'Committed to Shea for next week.'},
-    {t:'Kuchik revision round', c:'PJE / Shea', l:'render', h:24, s:'active', n:'Right after Singh. CAD 09-01 and change list in hand.'},
-    {t:'Surak finals', c:'Goldberg', l:'render', h:16, s:'active', n:''},
-    {t:'Green Boston', c:'Goldberg', l:'render', h:24, s:'active', n:'Final plan in hand, ready to build.'},
-    {t:'R50 Chatham interiors + 2 exteriors', c:'Lyndsay Padgett', l:'render', h:40, s:'waiting', n:'Waiting on her reference direction and the two exterior plans. Nudge her.'},
-    {t:'Morena', c:'Jason Zullo', l:'render', h:16, s:'waiting', n:'Paid. Waiting on his photos of the house and materials.'},
-    {t:'Chisholm invoice', c:'Goldberg', l:'admin', h:0.25, s:'active', n:'Delivered. Bill it for what it grew into.'},
-    {t:'Smith deposit invoice', c:'Mike Johnson', l:'admin', h:0.25, s:'active', n:'Send it. Then about 2 days of work once the deposit lands.'},
-    {t:'Johnson unbilled backlog', c:'Mike Johnson', l:'admin', h:0.5, s:'active', n:'Reconcile and send.'},
-    {t:'Frecon orchard, phase 2', c:'Frecon Farms', l:'video', h:36, s:'lead', n:'Drone, photo, video. Season-locked to this fall. Confirm Josh greenlit, then scope and price.'},
-    {t:'Shower Kings marketing retainer', c:'Josh (brother)', l:'lead', h:4, s:'lead', n:'Nail down. First use of the retainer framework.'},
-    {t:'Wessel Drive pricing', c:'Adam Zaremba', l:'lead', h:2, s:'lead', n:'Rough pricing and timing after the holiday weekend. He floated a bigger collaboration.'},
-    {t:'Kula Kamala aerials', c:'Stephen and Jenna', l:'video', h:12, s:'lead', n:'Domes and gardens. Wait for Jenna or nudge Stephen. Airspace check.'},
-    {t:'Shon Elk listings', c:'Shon Elk', l:'lead', h:2, s:'lead', n:'Connect and scope with the rate card.'},
-    {t:'Lydia Rieger doc interview', c:'Lydia Rieger', l:'video', h:24, s:'lead', n:'Sit-down interview to promote her consulting business.'},
-    {t:'Amy Auker meeting', c:'Amy Auker', l:'lead', h:1, s:'lead', n:'Her husband does contracting. Explore working together.'},
-    {t:'Wise Interiors re-approach', c:'Lyndsey', l:'lead', h:2, s:'lead', n:'Retainer prospect.'},
-    {t:'GSG twilight photo + video', c:'GSG / Chris Savage', l:'video', h:20, s:'active', n:'Date still to set with the homeowner. Your own gear, drone is legal now.'},
-    {t:'GSG retainer + Chris design fee', c:'GSG / Chris Savage', l:'lead', h:1, s:'lead', n:'Pin at the meeting.'},
-    {t:'Retainer framework', c:'Crossing Paths', l:'admin', h:4, s:'active', n:'Build once. Serves Shower Kings, Wise, GSG.'},
-    {t:'List the Mini 3', c:'Gear', l:'admin', h:0.5, s:'active', n:'Recoup cash.'},
-    {t:'24-70 lens', c:'Gear', l:'admin', h:0, s:'potential', n:'When income supports it.'},
-    {t:'Siding + corner trim tool', c:'Clearstory tools', l:'tools', h:0, s:'done', n:'Built. Fast siding and corner trim.'},
-    {t:'Divide tool', c:'Clearstory tools', l:'tools', h:0, s:'done', n:'Built. Divide with various features.'},
-    {t:'Modeling assistant', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. SketchUp to headless Shapely and back. Basic modeling and texturing from text prompts. Open-ended, fit into gaps.'},
-    {t:'Asset catalog', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Organize and index the asset library. Feeds the staging tool. Open-ended, fit into gaps.'},
-    {t:'Staging tool', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'Planned. Speed up placing furniture and decor in a space, built on the asset catalog. Open-ended, fit into gaps.'},
-    {t:'PlantGen', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Procedural plant modeling tool. Open-ended, fit into gaps.'},
-    {t:'2D landscape design tool', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Open-ended, fit into gaps.'},
-    {t:'Second project', c:'Jason Zullo', l:'lead', h:0, s:'potential', n:'Unquoted.'},
-    {t:'Another project', c:'Goldberg', l:'lead', h:0, s:'potential', n:'Unquoted.'},
-    {t:'Third project', c:'Mike Johnson', l:'lead', h:0, s:'potential', n:'Unquoted.'},
-    {t:'Fab shop ad content', c:'Clay Hails (cousin)', l:'video', h:0, s:'potential', n:'Short vertical cuts for Facebook ads. Custom farm equipment.'},
+    {
+      "t": "GSG testimonial, Friday 3:30",
+      "c": "GSG / Chris Savage",
+      "l": "video",
+      "h": 4,
+      "s": "active",
+      "n": "MKE 600 primary, DJI Mic Mini as safety. Interview only."
+    },
+    {
+      "t": "Morena",
+      "c": "Jason Zullo",
+      "l": "render",
+      "h": 16,
+      "s": "waiting",
+      "n": "Paid. Waiting on his photos of the house and materials."
+    },
+    {
+      "t": "Kalil / Stoney Pond",
+      "c": "Mike Johnson",
+      "l": "render",
+      "h": 16,
+      "s": "active",
+      "n": "Mike is waiting on you. Refine after his green-light on the rotated pool and pavilion."
+    },
+    {
+      "t": "Doukas redesign",
+      "c": "Konstantinos Doukas",
+      "l": "render",
+      "h": 24,
+      "s": "active",
+      "n": "Deposit paid. Pavilion style first for feedback, then layout, then renders."
+    },
+    {
+      "t": "Singh Brothers revisions",
+      "c": "PJE / Shea",
+      "l": "render",
+      "h": 16,
+      "s": "active",
+      "n": "Committed to Shea for next week."
+    },
+    {
+      "t": "Kuchik revision round",
+      "c": "PJE / Shea",
+      "l": "render",
+      "h": 24,
+      "s": "active",
+      "n": "Right after Singh. CAD 09-01 and change list in hand."
+    },
+    {
+      "t": "Surak finals",
+      "c": "Goldberg",
+      "l": "render",
+      "h": 16,
+      "s": "active",
+      "n": ""
+    },
+    {
+      "t": "Green Boston",
+      "c": "Goldberg",
+      "l": "render",
+      "h": 24,
+      "s": "active",
+      "n": "Final plan in hand, ready to build."
+    },
+    {
+      "t": "R50 Chatham interiors + 2 exteriors",
+      "c": "Lyndsay Padgett",
+      "l": "render",
+      "h": 40,
+      "s": "waiting",
+      "n": "Waiting on her reference direction and the two exterior plans. Nudge her."
+    },
+    {
+      "t": "Chisholm invoice",
+      "c": "Goldberg",
+      "l": "admin",
+      "h": 0.25,
+      "s": "active",
+      "n": "Delivered. Bill it for what it grew into."
+    },
+    {
+      "t": "Smith deposit invoice",
+      "c": "Mike Johnson",
+      "l": "admin",
+      "h": 0.25,
+      "s": "active",
+      "n": "Send it. Then about 2 days of work once the deposit lands."
+    },
+    {
+      "t": "Johnson unbilled backlog",
+      "c": "Mike Johnson",
+      "l": "admin",
+      "h": 0.5,
+      "s": "active",
+      "n": "Reconcile and send."
+    },
+    {
+      "t": "Frecon orchard, phase 2",
+      "c": "Frecon Farms",
+      "l": "video",
+      "h": 36,
+      "s": "lead",
+      "n": "Drone, photo, video. Season-locked to this fall. Confirm Josh greenlit, then scope and price."
+    },
+    {
+      "t": "Shower Kings marketing retainer",
+      "c": "Josh (brother)",
+      "l": "lead",
+      "h": 4,
+      "s": "lead",
+      "n": "Nail down. First use of the retainer framework."
+    },
+    {
+      "t": "Wessel Drive pricing",
+      "c": "Adam Zaremba",
+      "l": "lead",
+      "h": 2,
+      "s": "lead",
+      "n": "Rough pricing and timing after the holiday weekend. He floated a bigger collaboration."
+    },
+    {
+      "t": "Kula Kamala aerials",
+      "c": "Stephen and Jenna",
+      "l": "video",
+      "h": 12,
+      "s": "lead",
+      "n": "Domes and gardens. Wait for Jenna or nudge Stephen. Airspace check."
+    },
+    {
+      "t": "Shon Elk listings",
+      "c": "Shon Elk",
+      "l": "lead",
+      "h": 2,
+      "s": "lead",
+      "n": "Connect and scope with the rate card."
+    },
+    {
+      "t": "Lydia Rieger doc interview",
+      "c": "Lydia Rieger",
+      "l": "video",
+      "h": 24,
+      "s": "lead",
+      "n": "Sit-down interview to promote her consulting business."
+    },
+    {
+      "t": "Amy Auker meeting",
+      "c": "Amy Auker",
+      "l": "lead",
+      "h": 1,
+      "s": "lead",
+      "n": "Her husband does contracting. Explore working together."
+    },
+    {
+      "t": "Wise Interiors re-approach",
+      "c": "Lyndsey",
+      "l": "lead",
+      "h": 2,
+      "s": "lead",
+      "n": "Retainer prospect."
+    },
+    {
+      "t": "GSG twilight photo + video",
+      "c": "GSG / Chris Savage",
+      "l": "video",
+      "h": 20,
+      "s": "active",
+      "n": "Date still to set with the homeowner. Your own gear, drone is legal now."
+    },
+    {
+      "t": "GSG retainer ",
+      "c": "GSG / Chris Savage",
+      "l": "lead",
+      "h": 1,
+      "s": "lead",
+      "n": "Pin at the meeting."
+    },
+    {
+      "t": "Retainer framework",
+      "c": "Crossing Paths",
+      "l": "admin",
+      "h": 4,
+      "s": "active",
+      "n": "Build once. Serves Shower Kings, Wise, GSG."
+    },
+    {
+      "t": "List the Mini 3",
+      "c": "Gear",
+      "l": "admin",
+      "h": 0.5,
+      "s": "active",
+      "n": "Recoup cash."
+    },
+    {
+      "t": "24-70 lens",
+      "c": "Gear",
+      "l": "admin",
+      "h": 0,
+      "s": "potential",
+      "n": "When income supports it."
+    },
+    {
+      "t": "Siding + corner trim tool",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "done",
+      "n": "Built. Fast siding and corner trim."
+    },
+    {
+      "t": "Divide tool",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "done",
+      "n": "Built. Divide with various features."
+    },
+    {
+      "t": "Modeling assistant",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "active",
+      "n": "In progress. SketchUp to headless Shapely and back. Basic modeling and texturing from text prompts. Open-ended, fit into gaps."
+    },
+    {
+      "t": "Asset catalog",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "active",
+      "n": "In progress. Organize and index the asset library. Feeds the staging tool. Open-ended, fit into gaps."
+    },
+    {
+      "t": "Staging tool",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "active",
+      "n": "Planned. Speed up placing furniture and decor in a space, built on the asset catalog. Open-ended, fit into gaps."
+    },
+    {
+      "t": "PlantGen",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "active",
+      "n": "In progress. Procedural plant modeling tool. Open-ended, fit into gaps."
+    },
+    {
+      "t": "2D landscape design tool",
+      "c": "Clearstory tools",
+      "l": "tools",
+      "h": 0,
+      "s": "active",
+      "n": "In progress. Open-ended, fit into gaps."
+    },
+    {
+      "t": "Second project",
+      "c": "Jason Zullo",
+      "l": "lead",
+      "h": 0,
+      "s": "potential",
+      "n": "Unquoted."
+    },
+    {
+      "t": "Another project",
+      "c": "Goldberg",
+      "l": "lead",
+      "h": 0,
+      "s": "potential",
+      "n": "Unquoted."
+    },
+    {
+      "t": "Third project",
+      "c": "Mike Johnson",
+      "l": "lead",
+      "h": 0,
+      "s": "potential",
+      "n": "Unquoted."
+    },
+    {
+      "t": "Fab shop ad content",
+      "c": "Clay Hails (cousin)",
+      "l": "video",
+      "h": 0,
+      "s": "potential",
+      "n": "Short vertical cuts for Facebook ads. Custom farm equipment."
+    }
   ];
 
   let state = { items: [], hpd: 8, wknd: false, filter: 'all', open: null };
@@ -709,6 +960,4 @@
     render();
   });
 })();
-</script>
-</body>
-</html>
+</script></body></html>
