@@ -73,6 +73,7 @@
   /* two panes */
   .panes{display:grid;grid-template-columns:minmax(360px,1fr) minmax(360px,1.15fr);gap:28px;align-items:start}
   @media (max-width:960px){.panes{grid-template-columns:1fr}}
+  .pane .head{display:flex;justify-content:space-between;align-items:baseline;gap:12px}
   .pane h2{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 4px}
   .pane .hint{color:var(--dim);font-size:12.5px;margin:0 0 12px}
 
@@ -180,7 +181,7 @@
 
 <div class="panes">
   <section class="pane">
-    <h2>Queue</h2>
+    <div class="head"><h2>Queue</h2><button class="btn small" id="add">Add item</button></div>
     <p class="hint">Drag the grip to reorder. Click a title to edit hours, status, or notes. Check the box when it's done.</p>
     <ul class="queue" id="queue"></ul>
   </section>
@@ -227,7 +228,13 @@
     {t:'Retainer framework', c:'Crossing Paths', l:'admin', h:4, s:'active', n:'Build once. Serves Shower Kings, Wise, GSG.'},
     {t:'List the Mini 3', c:'Gear', l:'admin', h:0.5, s:'active', n:'Recoup cash.'},
     {t:'24-70 lens', c:'Gear', l:'admin', h:0, s:'potential', n:'When income supports it.'},
-    {t:'Pipeline tools', c:'Clearstory', l:'tools', h:0, s:'potential', n:'Siding and divide done. Modeling assistant, asset catalog and staging in progress. Fit into gaps.'},
+    {t:'Siding + corner trim tool', c:'Clearstory tools', l:'tools', h:0, s:'done', n:'Built. Fast siding and corner trim.'},
+    {t:'Divide tool', c:'Clearstory tools', l:'tools', h:0, s:'done', n:'Built. Divide with various features.'},
+    {t:'Modeling assistant', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. SketchUp to headless Shapely and back. Basic modeling and texturing from text prompts. Open-ended, fit into gaps.'},
+    {t:'Asset catalog', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Organize and index the asset library. Feeds the staging tool. Open-ended, fit into gaps.'},
+    {t:'Staging tool', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'Planned. Speed up placing furniture and decor in a space, built on the asset catalog. Open-ended, fit into gaps.'},
+    {t:'PlantGen', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Procedural plant modeling tool. Open-ended, fit into gaps.'},
+    {t:'2D landscape design tool', c:'Clearstory tools', l:'tools', h:0, s:'active', n:'In progress. Open-ended, fit into gaps.'},
     {t:'Second project', c:'Jason Zullo', l:'lead', h:0, s:'potential', n:'Unquoted.'},
     {t:'Another project', c:'Goldberg', l:'lead', h:0, s:'potential', n:'Unquoted.'},
     {t:'Third project', c:'Mike Johnson', l:'lead', h:0, s:'potential', n:'Unquoted.'},
@@ -238,15 +245,41 @@
   const uid = () => Math.random().toString(36).slice(2, 9);
   const seed = () => SEED.map(x => ({ id: uid(), ...x }));
 
+  /* ---------- merge new seed entries into a saved list ---------- */
+  const RETIRED = ['Pipeline tools']; // old combined rows that were split up
+  const norm = t => String(t || '').trim().toLowerCase();
+  function migrate() {
+    const before = state.items.length;
+    state.items = state.items.filter(it => !RETIRED.map(norm).includes(norm(it.t)));
+    const removed = before - state.items.length;
+    const have = new Set(state.items.map(it => norm(it.t)));
+    let added = 0;
+    for (const x of SEED) if (!have.has(norm(x.t))) { state.items.push({ id: uid(), ...x }); have.add(norm(x.t)); added++; }
+    return { added, removed };
+  }
+
   /* ---------- storage ---------- */
+  // Works inside Claude artifacts (window.storage) and on a normal site (localStorage).
+  const store = {
+    async get(k) {
+      if (window.storage && window.storage.get) { const r = await window.storage.get(k, false); return r ? r.value : null; }
+      return localStorage.getItem(k);
+    },
+    async set(k, v) {
+      if (window.storage && window.storage.set) { await window.storage.set(k, v, false); return; }
+      localStorage.setItem(k, v);
+    }
+  };
   async function load() {
     try {
-      const r = await window.storage.get(KEY, false);
-      if (r && r.value) {
-        const saved = JSON.parse(r.value);
+      const raw = await store.get(KEY);
+      if (raw) {
+        const saved = JSON.parse(raw);
         if (Array.isArray(saved.items) && saved.items.length) {
           state = { ...state, ...saved, open: null };
-          setStatus('Loaded your saved list.');
+          const m = migrate();
+          setStatus(m.added ? `Loaded your saved list and added ${m.added} new item${m.added===1?'':'s'}.` : 'Loaded your saved list.');
+          if (m.added || m.removed) save();
           return;
         }
       }
@@ -261,7 +294,7 @@
     saveTimer = setTimeout(async () => {
       try {
         const { open, ...rest } = state;
-        await window.storage.set(KEY, JSON.stringify(rest), false);
+        await store.set(KEY, JSON.stringify(rest));
         setStatus('Saved.');
       } catch (e) { setStatus('Could not save. Changes will not persist this session.'); }
     }, 250);
@@ -483,6 +516,11 @@
   /* ---------- wiring ---------- */
   document.getElementById('hpd').oninput = e => { state.hpd = parseFloat(e.target.value) || 8; save(); render(); };
   document.getElementById('wknd').onchange = e => { state.wknd = e.target.checked; save(); render(); };
+  document.getElementById('add').onclick = () => {
+    const it = { id: uid(), t: 'New item', c: '', l: state.filter === 'all' ? 'render' : state.filter, h: 0, s: 'active', n: '' };
+    state.items.push(it); state.open = it.id; save(); render();
+    const ed = document.querySelector('.editor'); if (ed) { ed.scrollIntoView({ block: 'center' }); const f = ed.querySelector('[data-f="t"]'); if (f) { f.focus(); f.select(); } }
+  };
   document.getElementById('reset').onclick = () => { if (confirm('Replace the current list with your original priority list? This clears your edits.')) { state.items = seed(); state.open = null; save(); render(); } };
   document.getElementById('filters').addEventListener('click', e => {
     const b = e.target.closest('.chip'); if (!b) return;
