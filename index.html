@@ -1,0 +1,506 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Runway</title>
+<style>
+  :root{
+    --base:#151a1f;      /* blue-hour slate */
+    --surface:#1b2127;
+    --raised:#222930;
+    --line:#2d363e;
+    --ink:#e8e3d8;       /* tungsten on skin */
+    --mute:#8d959d;
+    --dim:#5d666e;
+    --key:#e2a95a;       /* tungsten key */
+    --key-soft:rgba(226,169,90,.14);
+    --render:#6fb3b8;
+    --video:#e2a95a;
+    --admin:#9cc78a;
+    --lead:#b3a6d8;
+    --tools:#7f8890;
+    --danger:#d98a7a;
+    --serif:"Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,serif;
+    --sans:-apple-system,"Segoe UI",Inter,system-ui,Helvetica,Arial,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--base);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.45}
+  body{padding:28px 32px 48px}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+  button:focus-visible,input:focus-visible,select:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--key);outline-offset:2px}
+  input,select{font:inherit;color:var(--ink);background:var(--raised);border:1px solid var(--line);border-radius:6px;padding:6px 8px}
+
+  /* header */
+  .top{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap;margin-bottom:26px}
+  .wordmark{font-family:var(--serif);font-size:34px;line-height:1;letter-spacing:-.01em}
+  .wordmark small{display:block;font-family:var(--sans);font-size:13px;color:var(--mute);margin-top:6px;letter-spacing:0}
+  .capacity{display:flex;align-items:center;gap:18px;flex-wrap:wrap;color:var(--mute);font-size:13.5px}
+  .capacity label{display:flex;align-items:center;gap:8px}
+  .capacity input[type=number]{width:62px;text-align:center}
+  .capacity input[type=checkbox]{accent-color:var(--key);width:15px;height:15px}
+
+  /* hero line */
+  .landing{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:18px 0 22px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin-bottom:22px}
+  .landing .date{font-family:var(--serif);font-size:44px;line-height:1;letter-spacing:-.015em;color:var(--key)}
+  .landing .lede{font-size:15px;color:var(--mute);max-width:52ch}
+  .landing .lede b{color:var(--ink);font-weight:600}
+
+  /* next up */
+  .next{display:flex;align-items:center;gap:16px;padding:14px 16px;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--key);border-radius:8px;margin-bottom:22px}
+  .next .who{flex:1;min-width:0}
+  .next .who span{display:block;color:var(--mute);font-size:13px;margin-bottom:2px}
+  .next .who strong{font-size:17px;font-weight:600}
+  .next .est{font-family:var(--serif);font-size:22px;color:var(--key);white-space:nowrap}
+  .btn{padding:8px 14px;border-radius:6px;border:1px solid var(--line);background:var(--raised);color:var(--ink);font-size:13.5px}
+  .btn:hover{border-color:var(--mute)}
+  .btn.key{background:var(--key);color:#1a1409;border-color:var(--key);font-weight:600}
+  .btn.key:hover{filter:brightness(1.06)}
+  .btn.ghost{background:transparent}
+  .btn.small{padding:5px 10px;font-size:12.5px}
+
+  /* filters */
+  .filters{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--mute);font-size:13px;display:flex;align-items:center;gap:8px}
+  .chip i{width:8px;height:8px;border-radius:50%;display:inline-block;background:var(--dim)}
+  .chip.on{color:var(--ink);border-color:var(--mute);background:var(--raised)}
+  .chip[data-lane=render] i{background:var(--render)}
+  .chip[data-lane=video] i{background:var(--video)}
+  .chip[data-lane=admin] i{background:var(--admin)}
+  .chip[data-lane=lead] i{background:var(--lead)}
+  .chip[data-lane=tools] i{background:var(--tools)}
+
+  /* two panes */
+  .panes{display:grid;grid-template-columns:minmax(360px,1fr) minmax(360px,1.15fr);gap:28px;align-items:start}
+  @media (max-width:960px){.panes{grid-template-columns:1fr}}
+  .pane h2{font-family:var(--serif);font-weight:400;font-size:20px;margin:0 0 4px}
+  .pane .hint{color:var(--dim);font-size:12.5px;margin:0 0 12px}
+
+  /* queue rows */
+  .queue{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:22px 30px 1fr auto;gap:10px;align-items:center;padding:10px 6px 10px 4px;border-bottom:1px solid var(--line);position:relative}
+  .row::before{content:"";position:absolute;left:0;top:10px;bottom:10px;width:3px;border-radius:2px;background:var(--dim)}
+  .row[data-lane=render]::before{background:var(--render)}
+  .row[data-lane=video]::before{background:var(--video)}
+  .row[data-lane=admin]::before{background:var(--admin)}
+  .row[data-lane=lead]::before{background:var(--lead)}
+  .row[data-lane=tools]::before{background:var(--tools)}
+  .row.dragging{opacity:.35}
+  .row.over{box-shadow:inset 0 2px 0 var(--key)}
+  .row .grip{color:var(--dim);cursor:grab;user-select:none;font-size:16px;text-align:center}
+  .row .grip:active{cursor:grabbing}
+  .row .num{font-family:var(--serif);color:var(--mute);font-size:15px;text-align:right}
+  .row .main{min-width:0}
+  .row .title{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .sub{color:var(--mute);font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .row .sub .wait{color:var(--key)}
+  .row .right{display:flex;align-items:center;gap:8px;white-space:nowrap}
+  .row .est{font-family:var(--serif);font-size:15px;color:var(--ink);min-width:44px;text-align:right}
+  .row .lands{color:var(--mute);font-size:12.5px;min-width:52px;text-align:right}
+  .row .lands.empty{color:var(--dim)}
+  .row.done .title{text-decoration:line-through;color:var(--dim)}
+  .row.done .est,.row.done .lands{color:var(--dim)}
+  .row.potential .title{color:var(--mute)}
+  .check{width:16px;height:16px;border-radius:4px;border:1px solid var(--mute);background:transparent;display:inline-grid;place-items:center;font-size:11px;line-height:1;color:#1a1409}
+  .check.on{background:var(--admin);border-color:var(--admin)}
+  .row .tools{display:none;gap:4px}
+  .row:hover .tools,.row:focus-within .tools{display:flex}
+  .row .tools button{color:var(--mute);padding:2px 6px;border-radius:4px;font-size:12px}
+  .row .tools button:hover{color:var(--ink);background:var(--raised)}
+
+  /* editor */
+  .editor{grid-column:1/-1;display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;padding:8px 4px 4px 34px}
+  @media (max-width:560px){.editor{grid-template-columns:1fr}}
+  .editor label{display:flex;flex-direction:column;gap:4px;color:var(--mute);font-size:12.5px}
+  .editor input,.editor select{width:100%}
+  .editor .note{grid-column:1/-1}
+  .editor .actions{grid-column:1/-1;display:flex;gap:8px;justify-content:flex-end}
+
+  /* runway */
+  .weeks{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:6px;margin:0 0 16px}
+  .week{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:8px 8px 6px;min-height:78px}
+  .week .wk{color:var(--mute);font-size:12px;margin-bottom:6px;white-space:nowrap}
+  .week .fill{display:flex;flex-direction:column;gap:3px}
+  .week .seg{height:9px;border-radius:2px;opacity:.9}
+  .week .seg[data-lane=render]{background:var(--render)}
+  .week .seg[data-lane=video]{background:var(--video)}
+  .week .seg[data-lane=admin]{background:var(--admin)}
+  .week .seg[data-lane=lead]{background:var(--lead)}
+  .week .seg[data-lane=tools]{background:var(--tools)}
+  .week .seg.wait{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.35) 0 3px,transparent 3px 6px)}
+  .week .load{color:var(--dim);font-size:11.5px;margin-top:6px}
+  .week.over .load{color:var(--danger)}
+
+  .bars{display:flex;flex-direction:column;gap:7px}
+  .bar{display:grid;grid-template-columns:1fr 92px;gap:12px;align-items:center}
+  .bar .track{height:26px;background:var(--surface);border:1px solid var(--line);border-radius:5px;position:relative;overflow:hidden}
+  .bar .fillbar{position:absolute;left:0;top:0;bottom:0;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-size:12.5px;color:#12161a;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;transition:width .35s ease}
+  @media (prefers-reduced-motion:reduce){.bar .fillbar{transition:none}}
+  .bar .fillbar[data-lane=render]{background:var(--render)}
+  .bar .fillbar[data-lane=video]{background:var(--video)}
+  .bar .fillbar[data-lane=admin]{background:var(--admin)}
+  .bar .fillbar[data-lane=lead]{background:var(--lead)}
+  .bar .fillbar[data-lane=tools]{background:var(--tools)}
+  .bar .fillbar.wait{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.28) 0 4px,transparent 4px 8px)}
+  .bar .fillbar.sliver{padding:0;justify-content:center;font-size:0}
+  .bar .when{font-family:var(--serif);font-size:15px;color:var(--ink);text-align:right;white-space:nowrap}
+  .bar .when small{display:block;font-family:var(--sans);font-size:11.5px;color:var(--dim)}
+
+  .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
+  .foot .status{color:var(--mute)}
+  .empty{color:var(--dim);padding:20px 4px;font-size:14px}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wordmark">Runway<small>Your queue laid across real time. Drag to reorder and watch where things land.</small></div>
+  <div class="capacity">
+    <label>Hours a day <input id="hpd" type="number" min="1" max="16" step="0.5" value="8"></label>
+    <label><input id="wknd" type="checkbox"> Work weekends</label>
+    <button class="btn ghost small" id="reset">Reset to my list</button>
+  </div>
+</header>
+
+<section class="landing">
+  <div class="date" id="bookedThrough">…</div>
+  <div class="lede" id="lede"></div>
+</section>
+
+<section class="next" id="next"></section>
+
+<div class="filters" id="filters">
+  <button class="chip on" data-lane="all"><i></i>Everything</button>
+  <button class="chip" data-lane="render"><i></i>Render</button>
+  <button class="chip" data-lane="video"><i></i>Video</button>
+  <button class="chip" data-lane="admin"><i></i>Money and admin</button>
+  <button class="chip" data-lane="lead"><i></i>Leads</button>
+  <button class="chip" data-lane="tools"><i></i>Tools</button>
+</div>
+
+<div class="panes">
+  <section class="pane">
+    <h2>Queue</h2>
+    <p class="hint">Drag the grip to reorder. Click a title to edit hours, status, or notes. Check the box when it's done.</p>
+    <ul class="queue" id="queue"></ul>
+  </section>
+  <section class="pane">
+    <h2>Runway</h2>
+    <p class="hint">Weeks from today, filled by what's scheduled. Hatched means waiting on someone else.</p>
+    <div class="weeks" id="weeks"></div>
+    <div class="bars" id="bars"></div>
+  </section>
+</div>
+
+<footer class="foot">
+  <span class="status" id="status">Loading your list…</span>
+  <span>Estimates are your max-day numbers. Potentials and open-ended work don't take runway time.</span>
+</footer>
+
+<script>
+(() => {
+  const KEY = 'runway:state:v1';
+
+  const SEED = [
+    {t:'GSG testimonial, Friday 3:30', c:'GSG / Chris Savage', l:'video', h:4,  s:'active', n:'MKE 600 primary, DJI Mic Mini as safety. Interview only.'},
+    {t:'Kalil / Stoney Pond', c:'Mike Johnson', l:'render', h:16, s:'active', n:'Mike is waiting on you. Refine after his green-light on the rotated pool and pavilion.'},
+    {t:'Doukas redesign', c:'Konstantinos Doukas', l:'render', h:24, s:'active', n:'Deposit paid. Pavilion style first for feedback, then layout, then renders.'},
+    {t:'Singh Brothers revisions', c:'PJE / Shea', l:'render', h:16, s:'active', n:'Committed to Shea for next week.'},
+    {t:'Kuchik revision round', c:'PJE / Shea', l:'render', h:24, s:'active', n:'Right after Singh. CAD 09-01 and change list in hand.'},
+    {t:'Surak finals', c:'Goldberg', l:'render', h:16, s:'active', n:''},
+    {t:'Green Boston', c:'Goldberg', l:'render', h:24, s:'active', n:'Final plan in hand, ready to build.'},
+    {t:'R50 Chatham interiors + 2 exteriors', c:'Lyndsay Padgett', l:'render', h:40, s:'waiting', n:'Waiting on her reference direction and the two exterior plans. Nudge her.'},
+    {t:'Morena', c:'Jason Zullo', l:'render', h:16, s:'waiting', n:'Paid. Waiting on his photos of the house and materials.'},
+    {t:'Chisholm invoice', c:'Goldberg', l:'admin', h:0.25, s:'active', n:'Delivered. Bill it for what it grew into.'},
+    {t:'Smith deposit invoice', c:'Mike Johnson', l:'admin', h:0.25, s:'active', n:'Send it. Then about 2 days of work once the deposit lands.'},
+    {t:'Johnson unbilled backlog', c:'Mike Johnson', l:'admin', h:0.5, s:'active', n:'Reconcile and send.'},
+    {t:'Frecon orchard, phase 2', c:'Frecon Farms', l:'video', h:36, s:'lead', n:'Drone, photo, video. Season-locked to this fall. Confirm Josh greenlit, then scope and price.'},
+    {t:'Shower Kings marketing retainer', c:'Josh (brother)', l:'lead', h:4, s:'lead', n:'Nail down. First use of the retainer framework.'},
+    {t:'Wessel Drive pricing', c:'Adam Zaremba', l:'lead', h:2, s:'lead', n:'Rough pricing and timing after the holiday weekend. He floated a bigger collaboration.'},
+    {t:'Kula Kamala aerials', c:'Stephen and Jenna', l:'video', h:12, s:'lead', n:'Domes and gardens. Wait for Jenna or nudge Stephen. Airspace check.'},
+    {t:'Shon Elk listings', c:'Shon Elk', l:'lead', h:2, s:'lead', n:'Connect and scope with the rate card.'},
+    {t:'Lydia Rieger doc interview', c:'Lydia Rieger', l:'video', h:24, s:'lead', n:'Sit-down interview to promote her consulting business.'},
+    {t:'Amy Auker meeting', c:'Amy Auker', l:'lead', h:1, s:'lead', n:'Her husband does contracting. Explore working together.'},
+    {t:'Wise Interiors re-approach', c:'Lyndsey', l:'lead', h:2, s:'lead', n:'Retainer prospect.'},
+    {t:'GSG twilight photo + video', c:'GSG / Chris Savage', l:'video', h:20, s:'active', n:'Date still to set with the homeowner. Your own gear, drone is legal now.'},
+    {t:'GSG retainer + Chris design fee', c:'GSG / Chris Savage', l:'lead', h:1, s:'lead', n:'Pin at the meeting.'},
+    {t:'Retainer framework', c:'Crossing Paths', l:'admin', h:4, s:'active', n:'Build once. Serves Shower Kings, Wise, GSG.'},
+    {t:'List the Mini 3', c:'Gear', l:'admin', h:0.5, s:'active', n:'Recoup cash.'},
+    {t:'24-70 lens', c:'Gear', l:'admin', h:0, s:'potential', n:'When income supports it.'},
+    {t:'Pipeline tools', c:'Clearstory', l:'tools', h:0, s:'potential', n:'Siding and divide done. Modeling assistant, asset catalog and staging in progress. Fit into gaps.'},
+    {t:'Second project', c:'Jason Zullo', l:'lead', h:0, s:'potential', n:'Unquoted.'},
+    {t:'Another project', c:'Goldberg', l:'lead', h:0, s:'potential', n:'Unquoted.'},
+    {t:'Third project', c:'Mike Johnson', l:'lead', h:0, s:'potential', n:'Unquoted.'},
+    {t:'Fab shop ad content', c:'Clay Hails (cousin)', l:'video', h:0, s:'potential', n:'Short vertical cuts for Facebook ads. Custom farm equipment.'},
+  ];
+
+  let state = { items: [], hpd: 8, wknd: false, filter: 'all', open: null };
+  const uid = () => Math.random().toString(36).slice(2, 9);
+  const seed = () => SEED.map(x => ({ id: uid(), ...x }));
+
+  /* ---------- storage ---------- */
+  async function load() {
+    try {
+      const r = await window.storage.get(KEY, false);
+      if (r && r.value) {
+        const saved = JSON.parse(r.value);
+        if (Array.isArray(saved.items) && saved.items.length) {
+          state = { ...state, ...saved, open: null };
+          setStatus('Loaded your saved list.');
+          return;
+        }
+      }
+    } catch (e) { /* first run or unavailable */ }
+    state.items = seed();
+    setStatus('Starting from your priority list.');
+    save();
+  }
+  let saveTimer;
+  function save() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(async () => {
+      try {
+        const { open, ...rest } = state;
+        await window.storage.set(KEY, JSON.stringify(rest), false);
+        setStatus('Saved.');
+      } catch (e) { setStatus('Could not save. Changes will not persist this session.'); }
+    }, 250);
+  }
+  function setStatus(t) { document.getElementById('status').textContent = t; }
+
+  /* ---------- scheduling ---------- */
+  const schedulable = it => it.s !== 'done' && it.s !== 'potential' && it.h > 0;
+  function isWork(d) { const w = d.getDay(); return state.wknd || (w !== 0 && w !== 6); }
+  function nextWork(d) { const x = new Date(d); x.setHours(0,0,0,0); while (!isWork(x)) x.setDate(x.getDate()+1); return x; }
+  function schedule() {
+    const hpd = Math.max(1, +state.hpd || 8);
+    let cur = nextWork(new Date());
+    let used = 0; // hours used on cur day
+    const out = new Map();
+    for (const it of state.items) {
+      if (!schedulable(it)) continue;
+      let left = it.h;
+      const start = new Date(cur);
+      let end = new Date(cur);
+      while (left > 0) {
+        const room = hpd - used;
+        if (left <= room) { used += left; left = 0; end = new Date(cur); }
+        else { left -= room; used = 0; cur = nextWork(new Date(cur.getTime() + 864e5)); }
+      }
+      if (used >= hpd) { used = 0; cur = nextWork(new Date(cur.getTime() + 864e5)); }
+      out.set(it.id, { start, end });
+    }
+    return out;
+  }
+  const fmt = d => d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
+  const fmtLong = d => d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
+  function estText(h) {
+    if (!h) return 'none';
+    if (h < 1) return Math.round(h*60) + ' min';
+    if (h < 8) return (Math.round(h*10)/10) + ' h';
+    const d = h/8; return (Number.isInteger(d) ? d : d.toFixed(1)) + ' d';
+  }
+
+  /* ---------- render ---------- */
+  function render() {
+    const sch = schedule();
+    renderHero(sch);
+    renderNext(sch);
+    renderQueue(sch);
+    renderRunway(sch);
+  }
+
+  function renderHero(sch) {
+    let last = null, hrs = 0, days = 0;
+    for (const it of state.items) if (schedulable(it)) { hrs += it.h; const s = sch.get(it.id); if (s && (!last || s.end > last)) last = s.end; }
+    days = hrs / (+state.hpd || 8);
+    const el = document.getElementById('bookedThrough');
+    const lede = document.getElementById('lede');
+    if (!last) { el.textContent = 'Clear'; lede.innerHTML = 'Nothing scheduled. Add hours to an item or uncheck something.'; return; }
+    el.textContent = fmtLong(last);
+    const openCount = state.items.filter(i => i.s === 'active').length;
+    const waitCount = state.items.filter(i => i.s === 'waiting').length;
+    lede.innerHTML = `is when the runway clears at <b>${state.hpd} hours a day</b>${state.wknd ? ', weekends included' : ', weekdays only'}. That's <b>${Math.round(days)} working days</b> of estimated work, <b>${openCount}</b> active and <b>${waitCount}</b> waiting on someone else.`;
+  }
+
+  function renderNext(sch) {
+    const el = document.getElementById('next');
+    const it = state.items.find(i => i.s === 'active' && i.h > 0);
+    if (!it) { el.innerHTML = '<div class="who"><span>Next up</span><strong>Nothing active with hours on it</strong></div>'; return; }
+    const s = sch.get(it.id);
+    el.innerHTML = `
+      <div class="who"><span>Next up</span><strong>${esc(it.t)}</strong>
+        <span style="margin-top:2px">${esc(it.c)}${s ? ' · lands ' + fmt(s.end) : ''}</span></div>
+      <div class="est">${estText(it.h)}</div>
+      <button class="btn key" data-done="${it.id}">Mark done</button>`;
+    el.querySelector('[data-done]').onclick = () => toggleDone(it.id);
+  }
+
+  function renderQueue(sch) {
+    const ul = document.getElementById('queue');
+    ul.innerHTML = '';
+    let n = 0;
+    const visible = state.items.filter(it => state.filter === 'all' || it.l === state.filter);
+    if (!visible.length) { ul.innerHTML = '<li class="empty">Nothing in this lane.</li>'; return; }
+    for (const it of state.items) {
+      if (state.filter !== 'all' && it.l !== state.filter) continue;
+      n++;
+      const li = document.createElement('li');
+      li.className = 'row' + (it.s === 'done' ? ' done' : '') + (it.s === 'potential' ? ' potential' : '');
+      li.dataset.lane = it.l; li.dataset.id = it.id; li.draggable = true;
+      const s = sch.get(it.id);
+      const landsTxt = it.s === 'done' ? 'done' : (s ? fmt(s.end) : (it.s === 'potential' ? 'unquoted' : 'no hours'));
+      const waitTag = it.s === 'waiting' ? '<span class="wait">waiting</span> · ' : '';
+      li.innerHTML = `
+        <span class="grip" title="Drag to reorder" aria-hidden="true">⋮⋮</span>
+        <span class="num">${n}</span>
+        <div class="main">
+          <div class="title" role="button" tabindex="0">${esc(it.t)}</div>
+          <div class="sub">${waitTag}${esc(it.c)}${it.n ? ' · ' + esc(it.n) : ''}</div>
+        </div>
+        <div class="right">
+          <span class="tools">
+            <button data-up title="Move up">↑</button>
+            <button data-down title="Move down">↓</button>
+          </span>
+          <span class="est">${estText(it.h)}</span>
+          <span class="lands ${s ? '' : 'empty'}">${landsTxt}</span>
+          <button class="check ${it.s==='done'?'on':''}" aria-label="Mark done" data-check>${it.s==='done' ? '✓' : ''}</button>
+        </div>`;
+      li.querySelector('.title').onclick = () => { state.open = state.open === it.id ? null : it.id; render(); };
+      li.querySelector('.title').onkeydown = e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); state.open = state.open === it.id ? null : it.id; render(); } };
+      li.querySelector('[data-check]').onclick = () => toggleDone(it.id);
+      li.querySelector('[data-up]').onclick = () => move(it.id, -1);
+      li.querySelector('[data-down]').onclick = () => move(it.id, 1);
+      // drag
+      li.addEventListener('dragstart', e => { dragId = it.id; li.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
+      li.addEventListener('dragend', () => { dragId = null; ul.querySelectorAll('.row').forEach(r => r.classList.remove('dragging','over')); });
+      li.addEventListener('dragover', e => { e.preventDefault(); if (dragId && dragId !== it.id) li.classList.add('over'); });
+      li.addEventListener('dragleave', () => li.classList.remove('over'));
+      li.addEventListener('drop', e => { e.preventDefault(); if (dragId && dragId !== it.id) reorder(dragId, it.id); });
+      ul.appendChild(li);
+      if (state.open === it.id) ul.appendChild(editor(it));
+    }
+  }
+  let dragId = null;
+
+  function editor(it) {
+    const li = document.createElement('li');
+    li.className = 'editor';
+    li.innerHTML = `
+      <label>Title <input data-f="t" value="${attr(it.t)}"></label>
+      <label>Client <input data-f="c" value="${attr(it.c)}"></label>
+      <label>Hours <input data-f="h" type="number" min="0" step="0.25" value="${it.h}"></label>
+      <label>Status <select data-f="s">
+        ${['active','waiting','lead','potential','done'].map(v => `<option value="${v}" ${it.s===v?'selected':''}>${v}</option>`).join('')}
+      </select></label>
+      <label>Lane <select data-f="l">
+        ${[['render','Render'],['video','Video'],['admin','Money and admin'],['lead','Lead'],['tools','Tools']].map(([v,k]) => `<option value="${v}" ${it.l===v?'selected':''}>${k}</option>`).join('')}
+      </select></label>
+      <label class="note">Note <input data-f="n" value="${attr(it.n)}"></label>
+      <div class="actions">
+        <button class="btn ghost small" data-del>Remove</button>
+        <button class="btn small" data-close>Close</button>
+      </div>`;
+    li.querySelectorAll('[data-f]').forEach(inp => inp.oninput = () => {
+      const f = inp.dataset.f;
+      it[f] = f === 'h' ? Math.max(0, parseFloat(inp.value) || 0) : inp.value;
+      save(); renderLight();
+    });
+    li.querySelector('[data-close]').onclick = () => { state.open = null; render(); };
+    li.querySelector('[data-del]').onclick = () => { state.items = state.items.filter(x => x.id !== it.id); state.open = null; save(); render(); };
+    return li;
+  }
+  // re-render everything except keep the editor open and focused
+  function renderLight() {
+    const active = document.activeElement;
+    const f = active && active.dataset ? active.dataset.f : null;
+    const pos = active && active.selectionStart;
+    render();
+    if (f) { const again = document.querySelector(`.editor [data-f="${f}"]`); if (again) { again.focus(); try { again.setSelectionRange(pos,pos); } catch(e){} } }
+  }
+
+  function renderRunway(sch) {
+    const weeksEl = document.getElementById('weeks');
+    const barsEl = document.getElementById('bars');
+    const hpd = +state.hpd || 8;
+    const items = state.items.filter(schedulable).filter(it => state.filter === 'all' || it.l === state.filter);
+    const all = state.items.filter(schedulable);
+    if (!all.length) { weeksEl.innerHTML = ''; barsEl.innerHTML = '<div class="empty">Nothing on the runway.</div>'; return; }
+
+    // week strip across the whole schedule (not filtered), so the calendar stays honest
+    let last = null;
+    for (const it of all) { const s = sch.get(it.id); if (s && (!last || s.end > last)) last = s.end; }
+    const start = nextWork(new Date()); start.setDate(start.getDate() - ((start.getDay()+6)%7)); // Monday of this week
+    const weeks = [];
+    for (let d = new Date(start); d <= last; d.setDate(d.getDate()+7)) weeks.push(new Date(d));
+    const cap = hpd * (state.wknd ? 7 : 5);
+    weeksEl.innerHTML = weeks.slice(0, 16).map(w => {
+      const wEnd = new Date(w); wEnd.setDate(wEnd.getDate()+6);
+      const segs = []; let load = 0;
+      for (const it of all) {
+        const s = sch.get(it.id); if (!s) continue;
+        if (s.end < w || s.start > wEnd) continue;
+        // approximate hours in this week
+        const days = countWork(maxD(s.start,w), minD(s.end,wEnd));
+        const total = Math.max(1, countWork(s.start, s.end));
+        const share = Math.min(it.h, it.h * days / total);
+        load += share;
+        segs.push(`<div class="seg ${it.s==='waiting'?'wait':''}" data-lane="${it.l}" title="${attr(it.t)}" style="width:${Math.max(6, Math.round(100*share/cap))}%"></div>`);
+      }
+      return `<div class="week ${load>cap?'over':''}"><div class="wk">${fmt(w)}</div><div class="fill">${segs.join('')}</div><div class="load">${Math.round(load)} of ${cap} h</div></div>`;
+    }).join('');
+    if (weeks.length > 16) weeksEl.innerHTML += `<div class="week"><div class="wk">+${weeks.length-16} more</div></div>`;
+
+    const maxH = Math.max(...items.map(i => i.h), 1);
+    barsEl.innerHTML = items.map(it => {
+      const s = sch.get(it.id);
+      const w = Math.max(2, Math.round(100 * it.h / maxH));
+      const sliver = w < 14;
+      return `<div class="bar">
+        <div class="track"><div class="fillbar ${it.s==='waiting'?'wait':''} ${sliver?'sliver':''}" data-lane="${it.l}" style="width:${w}%" title="${attr(it.t)} · ${estText(it.h)}">${sliver ? '' : esc(it.t)}</div></div>
+        <div class="when">${s ? fmt(s.end) : 'none'}<small>${s ? (sameDay(s.start,s.end) ? 'one day' : 'from ' + fmt(s.start)) : ''}</small></div>
+      </div>`;
+    }).join('');
+  }
+  function countWork(a, b) { let n = 0; const d = new Date(a); d.setHours(0,0,0,0); const e = new Date(b); e.setHours(0,0,0,0); while (d <= e) { if (isWork(d)) n++; d.setDate(d.getDate()+1); } return n; }
+  const maxD = (a,b) => a > b ? a : b, minD = (a,b) => a < b ? a : b;
+  const sameDay = (a,b) => a.toDateString() === b.toDateString();
+
+  /* ---------- actions ---------- */
+  function toggleDone(id) { const it = state.items.find(i => i.id === id); if (!it) return; it.s = it.s === 'done' ? 'active' : 'done'; save(); render(); }
+  function move(id, dir) {
+    const i = state.items.findIndex(x => x.id === id); const j = i + dir;
+    if (i < 0 || j < 0 || j >= state.items.length) return;
+    [state.items[i], state.items[j]] = [state.items[j], state.items[i]]; save(); render();
+  }
+  function reorder(fromId, toId) {
+    const from = state.items.findIndex(x => x.id === fromId), to = state.items.findIndex(x => x.id === toId);
+    if (from < 0 || to < 0) return;
+    const [it] = state.items.splice(from, 1); state.items.splice(to, 0, it); save(); render();
+  }
+
+  /* ---------- wiring ---------- */
+  document.getElementById('hpd').oninput = e => { state.hpd = parseFloat(e.target.value) || 8; save(); render(); };
+  document.getElementById('wknd').onchange = e => { state.wknd = e.target.checked; save(); render(); };
+  document.getElementById('reset').onclick = () => { if (confirm('Replace the current list with your original priority list? This clears your edits.')) { state.items = seed(); state.open = null; save(); render(); } };
+  document.getElementById('filters').addEventListener('click', e => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    state.filter = b.dataset.lane;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c === b));
+    save(); render();
+  });
+
+  const esc = s => String(s ?? '').replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const attr = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  load().then(() => {
+    document.getElementById('hpd').value = state.hpd;
+    document.getElementById('wknd').checked = !!state.wknd;
+    document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.lane === state.filter));
+    render();
+  });
+})();
+</script>
+</body>
+</html>
