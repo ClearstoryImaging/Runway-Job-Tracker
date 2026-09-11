@@ -5,6 +5,7 @@
 <title>Runway</title>
 <style>
   :root{
+    color-scheme:dark;
     --base:#151a1f;      /* blue-hour slate */
     --surface:#1b2127;
     --raised:#222930;
@@ -161,6 +162,45 @@
   .foot{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:14px;border-top:1px solid var(--line);color:var(--dim);font-size:12.5px}
   .foot .status{color:var(--mute)}
   .empty{color:var(--dim);padding:20px 4px;font-size:14px}
+
+  body{max-width:1800px;margin:auto;font-size:16px}
+  :root{--dim:#929ba3}
+  .pane .hint,.btn.small,.chip,.row .sub{font-size:14px}
+  .panes{grid-template-columns:minmax(400px,.95fr) minmax(480px,1.2fr)}
+  .row{grid-template-columns:20px 1fr auto;gap:8px;padding:12px 6px 12px 8px}
+  .row .num{display:none}.row .right{gap:10px}.row .tools{display:flex}
+  .row .title{white-space:normal;text-align:left;padding:0;display:block;font-size:16px}
+  .row .lands{font-size:14px}.check{width:26px;height:26px;flex-shrink:0}
+  .group{margin:18px 0}.group summary{cursor:pointer;padding:10px 0;font-family:var(--serif);font-size:20px}
+  .group summary small{font-family:var(--sans);font-size:14px;color:var(--mute)}
+  .view-controls{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:16px;font-size:14px}
+  .view-controls label{display:flex;gap:7px;align-items:center}.view-controls input{accent-color:var(--key)}
+  .next-action{color:var(--ink)!important;font-size:15px!important;margin-top:7px}
+  .editor{padding:12px 8px;background:var(--surface);border-radius:8px}
+  .editor label{font-size:14px}.editor textarea{font:inherit;color:var(--ink);background:var(--raised);border:1px solid var(--line);padding:8px;border-radius:6px;min-height:72px;resize:vertical}
+  .editor textarea:focus-visible{outline:2px solid var(--key)}
+  .forecast-caption{margin:0 0 5px;font-size:14px;color:var(--mute)}
+  .warning{color:var(--danger);font-size:14px;margin-top:5px}.badges{display:flex;gap:5px;flex-wrap:wrap;margin-top:5px}
+  .badge{font-size:12px;color:var(--mute);border:1px solid var(--line);border-radius:4px;padding:1px 5px}
+  .timeline-scroll{overflow:auto;border:1px solid var(--line);border-radius:8px;max-height:650px}
+  .timeline{position:relative;min-width:100%;font-size:13px}
+  .time-axis,.time-row{display:flex;position:relative;height:48px;border-bottom:1px solid var(--line)}
+  .time-row{background-image:linear-gradient(to right,transparent 43px,var(--line) 43px);background-size:44px 100%;background-position:200px 0}
+  .time-axis{height:44px;position:sticky;top:0;background:var(--raised);z-index:3}
+  .time-day{flex:none;width:44px;text-align:center;padding-top:4px;border-right:1px solid var(--line);font-size:12px}
+  .time-day.weekend{background:rgba(255,255,255,.025)}
+  .time-segment{position:absolute;top:12px;height:24px;background:var(--render);border-radius:4px;min-width:3px}
+  .time-segment[data-lane=video]{background:var(--video)}.time-segment[data-lane=admin]{background:var(--admin)}.time-segment[data-lane=lead]{background:var(--lead)}.time-segment[data-lane=tools]{background:var(--tools)}
+  .time-segment.wait{background-image:repeating-linear-gradient(135deg,rgba(0,0,0,.3) 0 4px,transparent 4px 8px)}
+  .time-segment.fixed{outline:2px solid var(--key);outline-offset:2px}
+  .pane{min-width:0}.timeline-label{position:sticky;left:0;top:0;z-index:2;align-self:stretch;display:flex;align-items:center;flex:none;width:200px;color:var(--ink);background:var(--surface);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding:2px 8px;border-right:1px solid var(--line);font-size:12px}
+  .axis-label{position:sticky;left:0;z-index:4;flex:none;width:200px;padding:12px 8px;background:var(--raised);border-right:1px solid var(--line)}
+  .weeks{display:flex;overflow:auto;padding-bottom:6px}.week{flex:0 0 110px}.week .load{font-size:12px}
+  .toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);display:flex;gap:20px;align-items:center;background:var(--raised);border:1px solid var(--key);padding:12px 18px;border-radius:8px;z-index:10;box-shadow:0 6px 30px #0006}.toast[hidden]{display:none}
+  .foot{font-size:13px}.queue-empty{color:var(--mute);padding:16px 0}
+  @media(max-width:1100px){.panes{grid-template-columns:1fr}.timeline-scroll{max-height:500px}}
+  @media(max-width:600px){body{padding:18px 14px}.top{gap:16px}.capacity{gap:10px}.landing .date{font-size:34px}.next{flex-wrap:wrap}.next .who{flex-basis:65%}.row{grid-template-columns:18px minmax(0,1fr)}.row .right{grid-column:2;justify-content:flex-end}.row .sub{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}.editor{grid-template-columns:1fr}.toast{width:calc(100% - 28px)}.time-row{height:46px}}
+
 </style>
 </head>
 <body>
@@ -168,12 +208,13 @@
 <header class="top">
   <div class="wordmark">Runway<small>Your queue laid across real time. Drag to reorder and watch where things land.</small></div>
   <div class="capacity">
-    <label>Hours a day <input id="hpd" type="number" min="1" max="16" step="0.5" value="8"></label>
+    <label>Focus hours/day <input id="hpd" type="number" min="1" max="16" step="0.5" value="8"></label>
     <label><input id="wknd" type="checkbox"> Work weekends</label>
     <button class="btn ghost small" id="reset">Reset to my list</button>
   </div>
 </header>
 
+<p class="forecast-caption" id="forecastCaption">Committed runway · estimated finish</p>
 <section class="landing">
   <div class="date" id="bookedThrough">…</div>
   <div class="lede" id="lede"></div>
@@ -190,17 +231,22 @@
   <button class="chip" data-lane="tools"><i></i>Tools</button>
 </div>
 
+<div class="view-controls">
+  <label><input id="pipeline" type="checkbox"> Include pipeline in forecast</label>
+  <label><input id="quick" type="checkbox"> Quick tasks (1 hour or less)</label>
+  <span style="color:var(--mute)">Workday starts at <input id="dayStart" type="time" value="09:00" aria-label="Workday start"></span>
+</div>
 <div class="panes">
   <section class="pane">
     <div class="head"><h2>Queue</h2><button class="btn small" id="add">Add item</button></div>
-    <p class="hint">Drag the grip to reorder. Click a title to edit hours, status, or notes. Check the box when it's done.</p>
-    <ul class="queue" id="queue"></ul>
+    <p class="hint">Reorder priorities. Open a project to set its next step, remaining hours, and dates.</p>
+    <div id="queue"></div>
   </section>
   <section class="pane">
     <h2>Runway</h2>
-    <p class="hint">Weeks from today, filled by what's scheduled. Hatched means waiting on someone else.</p>
+    <p class="hint">Shared calendar dates. Stripes: waiting until a ready date. Outlined: fixed appointment.</p>
     <div class="weeks" id="weeks"></div>
-    <div class="bars" id="bars"></div>
+    <div class="timeline-scroll" tabindex="0" aria-label="Scrollable project timeline"><div id="bars"></div></div><p class="hint" id="timelineNote"></p>
   </section>
 </div>
 
@@ -234,13 +280,15 @@
 
 <footer class="foot">
   <span class="status" id="status">Loading your list…</span>
-  <span>Estimates are your max-day numbers. Potentials and open-ended work don't take runway time.</span>
+  <span>Forecasts use remaining hours. Waiting items need a ready date; open-ended work stays off the timeline.</span>
 </footer>
 
+<div class="toast" id="undoToast" role="status" hidden><span id="undoText"></span><button class="btn small" id="undo">Undo</button></div>
 <script>
 (() => {
   const TEMPLATE = '<!doctype html>\n' + document.documentElement.outerHTML; // clean copy, captured before render
   const KEY = 'runway:state:v1';
+  /* EXPORT_STATE *//* END_EXPORT_STATE */
 
   const SEED = [
     {
@@ -525,51 +573,37 @@
     }
   ];
 
-  let state = { items: [], hpd: 8, wknd: false, filter: 'all', open: null };
+  let state = { items: [], hpd: 8, wknd: false, filter: 'all', open: null, pipeline: false, quick: false, dayStart: '09:00' };
   const uid = () => Math.random().toString(36).slice(2, 9);
   const seed = () => SEED.map(x => ({ id: uid(), ...x }));
 
-  /* ---------- one-time patches applied to an existing list (by title, keeps your order) ---------- */
-  const PATCH = {
-    version: 2,
-    changes: [
-      { t: 'Smith / Hannibal NY', s: 'active', top: true, n: 'URGENT: holding up their pool installation. Elevations in hand. Get the pool placement and layout out first. Deposit invoice goes out alongside the work.' },
-      { t: 'Smith deposit invoice', n: 'Send it alongside the work. Do not gate the start on it, the pool install is waiting.' },
-      { t: 'Morena', s: 'active', n: 'Paid. Jason sent the house and materials photos. Ready to build, right behind Smith.' },
-      { t: 'Chisholm invoice', s: 'done', n: 'Invoiced from tracked time.' },
-      { t: 'GSG testimonial, Friday 3:30', n: 'Audio settled: MKE 600 primary, DJI Mic Mini safety. Interview only.' },
-      { t: 'Frecon orchard, phase 2', s: 'active', h: 28, n: 'Started. First orchard shoot done and invoiced, reel delivered next morning. Rest of Phase 2 and Phase 3 still to scope and price.' },
-    ]
-  };
-  function applyPatch() {
-    if ((state.patchVersion || 0) >= PATCH.version) return false;
-    let changed = false;
-    for (const c of PATCH.changes) {
-      const i = state.items.findIndex(it => norm(it.t) === norm(c.t));
-      if (i < 0) continue;
-      const it = state.items[i];
-      if (c.s !== undefined) it.s = c.s;
-      if (c.h !== undefined) it.h = c.h;
-      if (c.n !== undefined) it.n = c.n;
-      if (c.top) { state.items.splice(i, 1); state.items.unshift(it); }
-      changed = true;
-    }
-    state.patchVersion = PATCH.version;
-    return changed;
+  function nextStep(it) {
+    if(it.next) return it.next;
+    if(it.n.startsWith('URGENT: holding up their pool installation.')) return 'Send pool placement and layout first; send the deposit invoice alongside it.';
+    return it.n || 'Add a next step to this project.';
   }
 
-  /* ---------- merge new seed entries into a saved list ---------- */
-  const RETIRED = ['Pipeline tools']; // old combined rows that were split up
-  const norm = t => String(t || '').trim().toLowerCase();
+  // Normalize saved records without restoring deleted or renamed starter items.
+  const PATCH = { version: 3 };
+  function applyPatch() { return false; }
   function migrate() {
-    const before = state.items.length;
-    state.items = state.items.filter(it => !RETIRED.map(norm).includes(norm(it.t)));
-    const removed = before - state.items.length;
-    const have = new Set(state.items.map(it => norm(it.t)));
-    let added = 0;
-    for (const x of SEED) if (!have.has(norm(x.t))) { state.items.push({ id: uid(), ...x }); have.add(norm(x.t)); added++; }
-    return { added, removed };
+    state.hpd = Math.min(16, Math.max(1, Number(state.hpd) || 8));
+    state.dayStart = /^([01]\d|2[0-3]):[0-5]\d$/.test(state.dayStart || '') ? state.dayStart : '09:00';
+    state.filter = ['all','render','video','admin','lead','tools'].includes(state.filter) ? state.filter : 'all';
+    const ids = new Set();
+    state.items = state.items.filter(x => x && typeof x === 'object').map(x => {
+      let id = typeof x.id === 'string' && /^[a-zA-Z0-9_-]+$/.test(x.id) && !ids.has(x.id) ? x.id : uid(); ids.add(id);
+      return { ...x, id, t: String(x.t || 'Untitled'), c: String(x.c || ''), n: String(x.n || ''),
+        h: Math.min(10000, Math.max(0, Number(x.h) || 0)),
+        l: ['render','video','admin','lead','tools'].includes(x.l) ? x.l : 'render',
+        s: ['active','waiting','lead','potential','done'].includes(x.s) ? x.s : 'active',
+        next: String(x.next || ''), ready: validDate(x.ready), due: validDate(x.due),
+        appointment: validDateTime(x.appointment) };
+    });
+    return { added: 0, removed: 0 };
   }
+  function validDate(v) { return /^\d{4}-\d{2}-\d{2}$/.test(v || '') && Number.isFinite(new Date(v+'T00:00:00').getTime()) ? v : ''; }
+  function validDateTime(v) { return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(v || '') && Number.isFinite(new Date(v).getTime()) ? v : ''; }
 
   /* ---------- storage ---------- */
   // Works inside Claude artifacts (window.storage) and on a normal site (localStorage).
@@ -608,10 +642,7 @@
     const body = { message: 'runway update', content: b64e(JSON.stringify(payload, null, 2)) };
     if (sync.sha) body.sha = sync.sha;
     let r = await fetch(apiUrl(), { method: 'PUT', headers: { ...hdrs(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    if (r.status === 409 || r.status === 422) { // stale sha: refetch and retry once
-      await pull(); if (sync.sha) body.sha = sync.sha; else delete body.sha;
-      r = await fetch(apiUrl(), { method: 'PUT', headers: { ...hdrs(), 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-    }
+    if (r.status === 409 || r.status === 422) throw new Error('another copy changed. Export a backup, then Pull to review the latest list before pushing.');
     if (!r.ok) throw new Error(r.status === 401 ? 'token rejected' : r.status === 403 ? 'no write access' : 'HTTP ' + r.status);
     const j = await r.json(); sync.sha = j.content && j.content.sha;
   }
@@ -631,7 +662,7 @@
     if (syncReady()) {
       try {
         const remote = await pull();
-        if (remote && Array.isArray(remote.items) && remote.items.length) {
+        if (remote && Array.isArray(remote.items)) {
           state = { ...state, ...remote, open: null };
           const m = migrate(); const patched = applyPatch();
           try { await store.set(KEY, JSON.stringify(stripOpen())); } catch (e) {}
@@ -646,7 +677,7 @@
       const raw = await store.get(KEY);
       if (raw) {
         const saved = JSON.parse(raw);
-        if (Array.isArray(saved.items) && saved.items.length) {
+        if (Array.isArray(saved.items)) {
           state = { ...state, ...saved, open: null };
           const m = migrate(); const patched = applyPatch();
           setStatus(m.added ? `Loaded your saved list and added ${m.added} new item${m.added===1?'':'s'}.` : (patched ? 'Loaded your saved list and applied today\'s updates.' : 'Loaded your saved list.'));
@@ -655,243 +686,215 @@
         }
       }
     } catch (e) { /* first run or unavailable */ }
-    state.items = seed(); state.patchVersion = PATCH.version;
+    state = { ...state, ...(typeof EXPORTED_STATE !== 'undefined' ? EXPORTED_STATE : {}), open: null };
+    if(typeof EXPORTED_STATE === 'undefined') state.items = seed();
+    migrate(); state.patchVersion = PATCH.version;
     setStatus('Starting from your priority list.');
     save();
   }
-  let saveTimer;
+  let saveTimer, syncChain=Promise.resolve();
   function save() {
+    if (undoFresh) undoFresh=false;
+    else if (undoSnapshot) { undoSnapshot=null; document.getElementById('undoToast').hidden=true; }
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => {
       const rest = stripOpen();
       try { await store.set(KEY, JSON.stringify(rest)); setStatus('Saved.'); }
       catch (e) { setStatus('Could not save locally. Changes will not persist this session.'); }
       if (syncReady()) {
-        try { await push(rest); setSync('Connected. Synced ' + timeNow() + '.'); }
+        try { syncChain=syncChain.catch(()=>{}).then(()=>push(rest)); await syncChain; setSync('Connected. Synced ' + timeNow() + '.'); }
         catch (e) { setSync('Sync failed: ' + e.message); }
       }
     }, 400);
   }
   function setStatus(t) { document.getElementById('status').textContent = t; }
 
-  /* ---------- scheduling ---------- */
-  const schedulable = it => it.s !== 'done' && it.s !== 'potential' && it.h > 0;
-  function isWork(d) { const w = d.getDay(); return state.wknd || (w !== 0 && w !== 6); }
-  function nextWork(d) { const x = new Date(d); x.setHours(0,0,0,0); while (!isWork(x)) x.setDate(x.getDate()+1); return x; }
-  function schedule() {
-    const hpd = Math.max(1, +state.hpd || 8);
-    let cur = nextWork(new Date());
-    let used = 0; // hours used on cur day
-    const out = new Map();
-    for (const it of state.items) {
-      if (!schedulable(it)) continue;
-      let left = it.h;
-      const start = new Date(cur);
-      let end = new Date(cur);
-      while (left > 0) {
-        const room = hpd - used;
-        if (left <= room) { used += left; left = 0; end = new Date(cur); }
-        else { left -= room; used = 0; cur = nextWork(new Date(cur.getTime() + 864e5)); }
+  /* ---------- scheduling: exact daily hour allocations ---------- */
+  const dateKey = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const today = () => { const d=new Date(); d.setHours(0,0,0,0); return d; };
+  const addDays = (d,n) => { const x=new Date(d); x.setDate(x.getDate()+n); return x; };
+  const isWork = d => state.wknd || ![0,6].includes(d.getDay());
+  const nextWork = d => { let x=new Date(d); while(!isWork(x)) x=addDays(x,1); return x; };
+  const remaining = it => Math.max(0, Number(it.h)||0);
+  const schedulable = (it,pipeline=state.pipeline) => it.s!=='done' && remaining(it)>0 &&
+    (pipeline || !['lead','potential'].includes(it.s)) && (it.s!=='waiting' || !!it.ready);
+  const fmt = d => d.toLocaleDateString(undefined,{month:'short',day:'numeric'});
+  const fmtLong = d => d.toLocaleDateString(undefined,{weekday:'short',month:'short',day:'numeric'});
+  function estText(h) {
+    if(!h) return 'Open-ended';
+    if(h<1) return Math.round(h*60)+' min';
+    return (Math.round(h*100)/100)+' h';
+  }
+  function schedule(pipeline=state.pipeline, anchor=today()) {
+    const out=new Map(), occupied=new Map();
+    const cap=Math.min(16,Math.max(1,+state.hpd||8));
+    const [hh,mm]=(state.dayStart||'09:00').split(':').map(Number);
+    const dayStart=hh+mm/60, dayEnd=Math.min(24,dayStart+cap);
+    const candidates=state.items.filter(it=>schedulable(it,pipeline));
+    function intervals(d) { const k=dateKey(d); if(!occupied.has(k)) occupied.set(k,[]); return occupied.get(k); }
+    function record(it,parts,warnings=[]) {
+      if(!parts.length) return;
+      const start=new Date(parts[0].date+'T00:00:00'), end=new Date(parts.at(-1).date+'T00:00:00');
+      if(it.due && dateKey(end)>it.due) warnings.push('Finishes after '+fmt(new Date(it.due+'T00:00:00'))+' deadline');
+      out.set(it.id,{start,end,parts,warnings});
+    }
+    // Reserve fixed appointments before assigning flexible work.
+    for(const it of candidates.filter(i=>i.appointment)) {
+      let at=new Date(it.appointment), left=remaining(it); const parts=[],warnings=[];
+      if(at<anchor) warnings.push('Appointment is in the past');
+      if(it.ready && dateKey(at)<it.ready) warnings.push('Appointment is before ready date');
+      while(left>0.000001) {
+        const d=new Date(at); d.setHours(0,0,0,0);
+        const from=at.getHours()+at.getMinutes()/60, hours=Math.min(left,24-from), to=from+hours;
+        const slots=intervals(d);
+        for(const slot of slots) if(from<slot.to && to>slot.from) {
+          warnings.push('Overlaps another appointment');
+          const other=out.get(slot.id); if(other) other.warnings.push('Overlaps another appointment');
+        }
+        if(!isWork(d)||from<dayStart||to>dayEnd) warnings.push('Outside available work hours');
+        slots.push({from,to,id:it.id}); parts.push({date:dateKey(d),from,to,hours});
+        left-=hours; at=addDays(d,1);
       }
-      if (used >= hpd) { used = 0; cur = nextWork(new Date(cur.getTime() + 864e5)); }
-      out.set(it.id, { start, end });
+      record(it,parts,[...new Set(warnings)]);
+    }
+    for(const it of candidates.filter(i=>!i.appointment)) {
+      let d=new Date(anchor), left=remaining(it); const parts=[];
+      if(it.ready && it.ready>dateKey(d)) d=new Date(it.ready+'T00:00:00');
+      d=nextWork(d);
+      while(left>0.000001) {
+        const slots=intervals(d).sort((a,b)=>a.from-b.from); let cursor=dayStart;
+        const gaps=[];
+        for(const slot of slots) { if(slot.from>cursor) gaps.push([cursor,Math.min(slot.from,dayEnd)]); cursor=Math.max(cursor,slot.to); }
+        if(cursor<dayEnd) gaps.push([cursor,dayEnd]);
+        for(const [from,to] of gaps) {
+          if(from>=dayEnd||to<=from||left<=0.000001) continue;
+          const hours=Math.min(left,to-from);
+          parts.push({date:dateKey(d),from,to:from+hours,hours});
+          slots.push({from,to:from+hours,id:it.id}); left-=hours;
+        }
+        if(left>0.000001) d=nextWork(addDays(d,1));
+      }
+      record(it,parts);
     }
     return out;
   }
-  const fmt = d => d.toLocaleDateString(undefined, { month:'short', day:'numeric' });
-  const fmtLong = d => d.toLocaleDateString(undefined, { weekday:'short', month:'short', day:'numeric' });
-  function estText(h) {
-    if (!h) return 'none';
-    if (h < 1) return Math.round(h*60) + ' min';
-    if (h < 8) return (Math.round(h*10)/10) + ' h';
-    const d = h/8; return (Number.isInteger(d) ? d : d.toFixed(1)) + ' d';
-  }
-
-  /* ---------- render ---------- */
   function render() {
-    const sch = schedule();
-    renderHero(sch);
-    renderNext(sch);
-    renderQueue(sch);
-    renderRunway(sch);
+    const sch=schedule(); renderHero(sch); renderNext(sch); renderQueue(sch); renderRunway(sch);
+    document.getElementById('pipeline').checked=!!state.pipeline;
+    document.getElementById('quick').checked=!!state.quick;
+    document.getElementById('dayStart').value=state.dayStart||'09:00';
+    document.getElementById('hpd').value=state.hpd;
+    document.getElementById('wknd').checked=!!state.wknd;
+    document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('on',c.dataset.lane===state.filter));
   }
-
   function renderHero(sch) {
-    let last = null, hrs = 0, days = 0;
-    for (const it of state.items) if (schedulable(it)) { hrs += it.h; const s = sch.get(it.id); if (s && (!last || s.end > last)) last = s.end; }
-    days = hrs / (+state.hpd || 8);
-    const el = document.getElementById('bookedThrough');
-    const lede = document.getElementById('lede');
-    if (!last) { el.textContent = 'Clear'; lede.innerHTML = 'Nothing scheduled. Add hours to an item or uncheck something.'; return; }
-    el.textContent = fmtLong(last);
-    const openCount = state.items.filter(i => i.s === 'active').length;
-    const waitCount = state.items.filter(i => i.s === 'waiting').length;
-    lede.innerHTML = `is when the runway clears at <b>${state.hpd} hours a day</b>${state.wknd ? ', weekends included' : ', weekdays only'}. That's <b>${Math.round(days)} working days</b> of estimated work, <b>${openCount}</b> active and <b>${waitCount}</b> waiting on someone else.`;
+    const committed=state.pipeline?schedule(false):sch;
+    const last=m=>[...m.values()].reduce((d,s)=>!d||s.end>d?s.end:d,null);
+    const end=last(sch), base=last(committed);
+    const hrs=state.items.filter(i=>schedulable(i)).reduce((n,i)=>n+remaining(i),0);
+    const blocked=state.items.filter(i=>i.s==='waiting'&&!i.ready).length;
+    document.getElementById('forecastCaption').textContent=state.pipeline?'Including pipeline · estimated finish':'Committed runway · estimated finish';
+    document.getElementById('bookedThrough').textContent=end?fmtLong(end):'Clear';
+    const [startHour,startMinute]=state.dayStart.split(':').map(Number);
+    const available=Math.round(Math.min(state.hpd,24-startHour-startMinute/60)*100)/100;
+    document.getElementById('lede').innerHTML=`<b>${hrs?estText(hrs):'0 h'}</b> scheduled at <b>${available} focus hours/day</b>, ${state.wknd?'weekends included':'weekdays only'}.${available<state.hpd?' Start earlier to fit all '+state.hpd+' hours before midnight.':''}${state.pipeline?' Committed work clears '+(base?fmt(base):'now')+'.':''}${blocked?' '+blocked+' waiting '+(blocked===1?'item needs':'items need')+' a ready date.':''}`;
   }
-
   function renderNext(sch) {
-    const el = document.getElementById('next');
-    const it = state.items.find(i => i.s === 'active' && i.h > 0);
-    if (!it) { el.innerHTML = '<div class="who"><span>Next up</span><strong>Nothing active with hours on it</strong></div>'; return; }
-    const s = sch.get(it.id);
-    el.innerHTML = `
-      <div class="who"><span>Next up</span><strong>${esc(it.t)}</strong>
-        <span style="margin-top:2px">${esc(it.c)}${s ? ' · lands ' + fmt(s.end) : ''}</span></div>
-      <div class="est">${estText(it.h)}</div>
-      <button class="btn key" data-done="${it.id}">Mark done</button>`;
-    el.querySelector('[data-done]').onclick = () => toggleDone(it.id);
+    const el=document.getElementById('next'), now=dateKey(today());
+    const it=state.items.find(i=>i.s==='active'&&i.h>0&&(!i.ready||i.ready<=now)&&(!i.appointment||i.appointment.slice(0,10)===now));
+    if(!it) { el.innerHTML='<div class="who"><span>Next up</span><strong>No active work ready today</strong><span>Check waiting items or upcoming appointments.</span></div>'; return; }
+    const s=sch.get(it.id);
+    el.innerHTML=`<div class="who"><span>Next up</span><strong>${esc(it.t)}</strong><span>${esc(it.c)}${s?' · estimated finish '+fmt(s.end):''}</span><span class="next-action">${esc(nextStep(it))}</span></div><div class="est">${estText(it.h)} left</div><button class="btn small" data-edit>Update</button><button class="btn key" data-done>Mark done</button>`;
+    el.querySelector('[data-done]').onclick=()=>toggleDone(it.id);
+    el.querySelector('[data-edit]').onclick=()=>openEditor(it.id);
   }
-
+  let dragId=null;
+  const groupOf=it=>it.s==='done'?'done':['lead','potential'].includes(it.s)?'pipeline':it.s==='waiting'?'waiting':it.h===0?'open':'active';
+  const groupState={active:true,waiting:false,pipeline:false,open:false,done:false};
+  function visibleItems() { return state.items.filter(i=>(state.filter==='all'||i.l===state.filter)&&(!state.quick||(i.h>0&&i.h<=1))); }
+  function openEditor(id) { state.open=state.open===id?null:id; render(); if(state.open) document.querySelector('.editor')?.scrollIntoView({block:'nearest'}); }
   function renderQueue(sch) {
-    const ul = document.getElementById('queue');
-    ul.innerHTML = '';
-    let n = 0;
-    const visible = state.items.filter(it => state.filter === 'all' || it.l === state.filter);
-    if (!visible.length) { ul.innerHTML = '<li class="empty">Nothing in this lane.</li>'; return; }
-    for (const it of state.items) {
-      if (state.filter !== 'all' && it.l !== state.filter) continue;
-      n++;
-      const li = document.createElement('li');
-      li.className = 'row' + (it.s === 'done' ? ' done' : '') + (it.s === 'potential' ? ' potential' : '');
-      li.dataset.lane = it.l; li.dataset.id = it.id; li.draggable = true;
-      const s = sch.get(it.id);
-      const landsTxt = it.s === 'done' ? 'done' : (s ? fmt(s.end) : (it.s === 'potential' ? 'unquoted' : 'no hours'));
-      const waitTag = it.s === 'waiting' ? '<span class="wait">waiting</span> · ' : '';
-      li.innerHTML = `
-        <span class="grip" title="Drag to reorder" aria-hidden="true">⋮⋮</span>
-        <span class="num">${n}</span>
-        <div class="main">
-          <div class="title" role="button" tabindex="0">${esc(it.t)}</div>
-          <div class="sub">${waitTag}${esc(it.c)}${it.n ? ' · ' + esc(it.n) : ''}</div>
-        </div>
-        <div class="right">
-          <span class="tools">
-            <button data-up title="Move up">↑</button>
-            <button data-down title="Move down">↓</button>
-          </span>
-          <span class="est">${estText(it.h)}</span>
-          <span class="lands ${s ? '' : 'empty'}">${landsTxt}</span>
-          <button class="check ${it.s==='done'?'on':''}" aria-label="Mark done" data-check>${it.s==='done' ? '✓' : ''}</button>
-        </div>`;
-      li.querySelector('.title').onclick = () => { state.open = state.open === it.id ? null : it.id; render(); };
-      li.querySelector('.title').onkeydown = e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); state.open = state.open === it.id ? null : it.id; render(); } };
-      li.querySelector('[data-check]').onclick = () => toggleDone(it.id);
-      li.querySelector('[data-up]').onclick = () => move(it.id, -1);
-      li.querySelector('[data-down]').onclick = () => move(it.id, 1);
-      // drag
-      li.addEventListener('dragstart', e => { dragId = it.id; li.classList.add('dragging'); e.dataTransfer.effectAllowed = 'move'; });
-      li.addEventListener('dragend', () => { dragId = null; ul.querySelectorAll('.row').forEach(r => r.classList.remove('dragging','over')); });
-      li.addEventListener('dragover', e => { e.preventDefault(); if (dragId && dragId !== it.id) li.classList.add('over'); });
-      li.addEventListener('dragleave', () => li.classList.remove('over'));
-      li.addEventListener('drop', e => { e.preventDefault(); if (dragId && dragId !== it.id) reorder(dragId, it.id); });
-      ul.appendChild(li);
-      if (state.open === it.id) ul.appendChild(editor(it));
+    const host=document.getElementById('queue'); host.innerHTML='';
+    const visible=visibleItems();
+    if(!visible.length) {host.innerHTML='<p class="queue-empty">No items match this view.</p>';return;}
+    for(const [group,label] of [['active','Active queue'],['waiting','Waiting'],['pipeline','Leads & possible work'],['open','Open-ended work'],['done','Completed']]) {
+      const items=visible.filter(i=>groupOf(i)===group); if(!items.length) continue;
+      const details=document.createElement('details'); details.className='group';
+      details.open=groupState[group]||items.some(i=>state.open===i.id);
+      details.innerHTML=`<summary>${label} <small>${items.length}</small></summary><ul class="queue"></ul>`;
+      details.ontoggle=()=>{groupState[group]=details.open;};
+      const ul=details.querySelector('ul'); host.appendChild(details);
+      for(const it of items) {
+        const li=document.createElement('li'), s=sch.get(it.id);
+        li.className='row'+(it.s==='done'?' done':''); li.dataset.lane=it.l; li.dataset.id=it.id;
+        const dates=[it.ready?'Ready '+fmt(new Date(it.ready+'T00:00:00')):'',it.due?'Due '+fmt(new Date(it.due+'T00:00:00')):'',it.appointment?'Appointment '+new Date(it.appointment).toLocaleString(undefined,{month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}):''].filter(Boolean);
+        li.innerHTML=`<span class="grip" draggable="true" title="Drag to reorder" aria-hidden="true">⋮⋮</span><div class="main"><button class="title" aria-expanded="${state.open===it.id}">${esc(it.t)}</button><div class="sub">${esc([it.c,it.next||it.n].filter(Boolean).join(' · '))}</div>${dates.length?'<div class="badges">'+dates.map(d=>'<span class="badge">'+esc(d)+'</span>').join('')+'</div>':''}${s?.warnings.length?'<div class="warning">'+esc([...new Set(s.warnings)].join(' · '))+'</div>':''}</div><div class="right"><span class="tools"><button data-up aria-label="Move ${attr(it.t)} up">↑</button><button data-down aria-label="Move ${attr(it.t)} down">↓</button></span><span class="est">${estText(it.h)}</span><span class="lands">${it.s==='done'?'Done':s?fmt(s.end):it.s==='waiting'?'Unscheduled':'—'}</span><button class="check ${it.s==='done'?'on':''}" aria-label="${it.s==='done'?'Reopen':'Complete'} ${attr(it.t)}" aria-pressed="${it.s==='done'}" data-check>${it.s==='done'?'✓':''}</button></div>`;
+        li.querySelector('.title').onclick=()=>openEditor(it.id);
+        li.querySelector('[data-check]').onclick=()=>toggleDone(it.id);
+        li.querySelector('[data-up]').onclick=()=>move(it.id,-1);
+        li.querySelector('[data-down]').onclick=()=>move(it.id,1);
+        li.querySelector('.grip').ondragstart=e=>{dragId=it.id;li.classList.add('dragging');e.dataTransfer.setData('text/plain',it.id);};
+        li.ondragend=()=>{dragId=null;render();};
+        li.ondragover=e=>{if(dragId&&groupOf(state.items.find(i=>i.id===dragId))===group){e.preventDefault();li.classList.add('over');}};
+        li.ondragleave=()=>li.classList.remove('over');
+        li.ondrop=e=>{e.preventDefault();if(dragId&&dragId!==it.id&&groupOf(state.items.find(i=>i.id===dragId))===group)reorder(dragId,it.id);};
+        ul.appendChild(li); if(state.open===it.id) ul.appendChild(editor(it));
+      }
     }
   }
-  let dragId = null;
-
   function editor(it) {
-    const li = document.createElement('li');
-    li.className = 'editor';
-    li.innerHTML = `
-      <label>Title <input data-f="t" value="${attr(it.t)}"></label>
-      <label>Client <input data-f="c" value="${attr(it.c)}"></label>
-      <label>Hours <input data-f="h" type="number" min="0" step="0.25" value="${it.h}"></label>
-      <label>Status <select data-f="s">
-        ${['active','waiting','lead','potential','done'].map(v => `<option value="${v}" ${it.s===v?'selected':''}>${v}</option>`).join('')}
-      </select></label>
-      <label>Lane <select data-f="l">
-        ${[['render','Render'],['video','Video'],['admin','Money and admin'],['lead','Lead'],['tools','Tools']].map(([v,k]) => `<option value="${v}" ${it.l===v?'selected':''}>${k}</option>`).join('')}
-      </select></label>
-      <label class="note">Note <input data-f="n" value="${attr(it.n)}"></label>
-      <div class="actions">
-        <button class="btn ghost small" data-del>Remove</button>
-        <button class="btn small" data-close>Close</button>
-      </div>`;
-    li.querySelectorAll('[data-f]').forEach(inp => inp.oninput = () => {
-      const f = inp.dataset.f;
-      it[f] = f === 'h' ? Math.max(0, parseFloat(inp.value) || 0) : inp.value;
-      save(); renderLight();
+    const li=document.createElement('li');li.className='editor';
+    li.innerHTML=`<label>Project <input data-f="t" value="${attr(it.t)}"></label><label>Client <input data-f="c" value="${attr(it.c)}"></label><label>Remaining hours <input data-f="h" type="number" min="0" max="10000" step="0.25" value="${it.h}"></label><label>Status <select data-f="s">${[['active','Active'],['waiting','Waiting'],['lead','Lead'],['potential','Possible'],['done','Done']].map(([v,l])=>`<option value="${v}" ${it.s===v?'selected':''}>${l}</option>`).join('')}</select></label><label>Lane <select data-f="l">${[['render','Render'],['video','Video'],['admin','Money and admin'],['lead','Leads'],['tools','Tools']].map(([v,l])=>`<option value="${v}" ${it.l===v?'selected':''}>${l}</option>`).join('')}</select></label><label>Next step <input data-f="next" value="${attr(it.next||'')}" placeholder="The next concrete action"></label><label>Ready to start <input data-f="ready" type="date" value="${attr(it.ready||'')}"></label><label>Deadline <input data-f="due" type="date" value="${attr(it.due||'')}"></label><label class="note">Fixed appointment (local time; remaining hours is its duration)<input data-f="appointment" type="datetime-local" value="${attr(it.appointment||'')}"></label><label class="note">Notes <textarea data-f="n">${esc(it.n)}</textarea></label><div class="actions"><button class="btn ghost small" data-del>Remove</button><button class="btn small" data-close>Close</button></div>`;
+    li.querySelectorAll('[data-f]').forEach(inp=>inp.oninput=inp.onchange=()=>{
+      const f=inp.dataset.f;
+      it[f]=f==='h'?Math.min(10000,Math.max(0,parseFloat(inp.value)||0)):inp.value;
+      save();const sch=schedule();renderHero(sch);renderNext(sch);renderRunway(sch);
     });
-    li.querySelector('[data-close]').onclick = () => { state.open = null; render(); };
-    li.querySelector('[data-del]').onclick = () => { state.items = state.items.filter(x => x.id !== it.id); state.open = null; save(); render(); };
+    li.querySelector('[data-close]').onclick=()=>{state.open=null;save();render();};
+    li.querySelector('[data-del]').onclick=()=>{remember('Project removed');state.items=state.items.filter(x=>x.id!==it.id);state.open=null;save();render();};
     return li;
   }
-  // re-render everything except keep the editor open and focused
-  function renderLight() {
-    const active = document.activeElement;
-    const f = active && active.dataset ? active.dataset.f : null;
-    const pos = active && active.selectionStart;
-    render();
-    if (f) { const again = document.querySelector(`.editor [data-f="${f}"]`); if (again) { again.focus(); try { again.setSelectionRange(pos,pos); } catch(e){} } }
-  }
-
   function renderRunway(sch) {
-    const weeksEl = document.getElementById('weeks');
-    const barsEl = document.getElementById('bars');
-    const hpd = +state.hpd || 8;
-    const items = state.items.filter(schedulable).filter(it => state.filter === 'all' || it.l === state.filter);
-    const all = state.items.filter(schedulable);
-    if (!all.length) { weeksEl.innerHTML = ''; barsEl.innerHTML = '<div class="empty">Nothing on the runway.</div>'; return; }
-
-    // week strip across the whole schedule (not filtered), so the calendar stays honest
-    let last = null;
-    for (const it of all) { const s = sch.get(it.id); if (s && (!last || s.end > last)) last = s.end; }
-    const start = nextWork(new Date()); start.setDate(start.getDate() - ((start.getDay()+6)%7)); // Monday of this week
-    const weeks = [];
-    for (let d = new Date(start); d <= last; d.setDate(d.getDate()+7)) weeks.push(new Date(d));
-    const cap = hpd * (state.wknd ? 7 : 5);
-    weeksEl.innerHTML = weeks.slice(0, 16).map(w => {
-      const wEnd = new Date(w); wEnd.setDate(wEnd.getDate()+6);
-      const segs = []; let load = 0;
-      for (const it of all) {
-        const s = sch.get(it.id); if (!s) continue;
-        if (s.end < w || s.start > wEnd) continue;
-        // approximate hours in this week
-        const days = countWork(maxD(s.start,w), minD(s.end,wEnd));
-        const total = Math.max(1, countWork(s.start, s.end));
-        const share = Math.min(it.h, it.h * days / total);
-        load += share;
-        segs.push(`<div class="seg ${it.s==='waiting'?'wait':''}" data-lane="${it.l}" title="${attr(it.t)}" style="width:${Math.max(6, Math.round(100*share/cap))}%"></div>`);
-      }
-      return `<div class="week ${load>cap?'over':''}"><div class="wk">${fmt(w)}</div><div class="fill">${segs.join('')}</div><div class="load">${Math.round(load)} of ${cap} h</div></div>`;
+    const weeksEl=document.getElementById('weeks'),barsEl=document.getElementById('bars');
+    const all=state.items.filter(i=>sch.has(i.id));
+    if(!all.length){weeksEl.innerHTML='';barsEl.innerHTML='<p class="queue-empty">Nothing scheduled in this forecast.</p>';document.getElementById('timelineNote').textContent='';return;}
+    const anchor=today(), last=[...sch.values()].reduce((d,s)=>s.end>d?s.end:d,anchor);
+    const dayDiff=(a,b)=>Math.round((Date.UTC(b.getFullYear(),b.getMonth(),b.getDate())-Date.UTC(a.getFullYear(),a.getMonth(),a.getDate()))/864e5);
+    const totalDays=dayDiff(anchor,last)+1, days=Math.min(totalDays,180);
+    const cap=Math.min(+state.hpd,24-(state.dayStart.split(':').map(Number).reduce((h,m,i)=>i?h+m/60:m,0)));
+    const weeks=[];let w=addDays(anchor,-((anchor.getDay()+6)%7));
+    for(let n=0;w<=last&&n<26;n++,w=addDays(w,7)){
+      const end=addDays(w,6),from=dateKey(w),to=dateKey(end);let load=0,available=0;const segs=[];
+      for(let d=new Date(w);d<=end;d=addDays(d,1))if(d>=anchor&&isWork(d))available+=cap;
+      for(const it of all){const hours=sch.get(it.id).parts.filter(p=>p.date>=from&&p.date<=to).reduce((n,p)=>n+p.hours,0);if(hours){load+=hours;segs.push(`<div class="seg ${it.s==='waiting'?'wait':''}" data-lane="${it.l}" title="${attr(it.t)}: ${hours.toFixed(2)} hours" style="width:${Math.min(100,Math.max(3,100*hours/(available||1)))}%"></div>`);}}
+      weeks.push(`<div class="week ${load>available+.001?'over':''}"><div class="wk">${fmt(w)}</div><div class="fill">${segs.join('')}</div><div class="load">${Math.round(load*100)/100} / ${available} h</div></div>`);
+    }
+    weeksEl.innerHTML=weeks.join('');
+    const axis=Array.from({length:days},(_,n)=>{const d=addDays(anchor,n);return `<div class="time-day ${!isWork(d)?'weekend':''}">${d.toLocaleDateString(undefined,{weekday:'short'})}<br>${d.getDate()} ${d.getDate()===1||n===0?d.toLocaleDateString(undefined,{month:'short'}):''}</div>`;}).join('');
+    const rows=all.filter(i=>(state.filter==='all'||i.l===state.filter)&&(!state.quick||i.h<=1)).map(it=>{
+      const plan=sch.get(it.id),parts=plan.parts.filter(p=>p.date>=dateKey(anchor)&&p.date<=dateKey(addDays(anchor,days-1)));
+      return `<div class="time-row" aria-label="${attr(it.t)}: ${fmt(plan.start)} to ${fmt(plan.end)}">${parts.map(p=>{const n=dayDiff(anchor,new Date(p.date+'T00:00:00'));return `<div class="time-segment ${it.s==='waiting'?'wait':''} ${it.appointment?'fixed':''}" data-lane="${it.l}" style="left:${200+n*44+p.from/24*44}px;width:${Math.max(3,p.hours/24*44)}px" title="${attr(it.t)} · ${p.date} · ${estText(p.hours)}"></div>`;}).join('')}<span class="timeline-label">${esc(it.t)} · ${fmt(plan.end)}</span></div>`;
     }).join('');
-    if (weeks.length > 16) weeksEl.innerHTML += `<div class="week"><div class="wk">+${weeks.length-16} more</div></div>`;
-
-    const maxH = Math.max(...items.map(i => i.h), 1);
-    barsEl.innerHTML = items.map(it => {
-      const s = sch.get(it.id);
-      const w = Math.max(2, Math.round(100 * it.h / maxH));
-      const sliver = w < 14;
-      return `<div class="bar">
-        <div class="track"><div class="fillbar ${it.s==='waiting'?'wait':''} ${sliver?'sliver':''}" data-lane="${it.l}" style="width:${w}%" title="${attr(it.t)} · ${estText(it.h)}">${sliver ? '' : esc(it.t)}</div></div>
-        <div class="when">${s ? fmt(s.end) : 'none'}<small>${s ? (sameDay(s.start,s.end) ? 'one day' : 'from ' + fmt(s.start)) : ''}</small></div>
-      </div>`;
-    }).join('');
+    barsEl.innerHTML=`<div class="timeline" style="width:${200+days*44}px"><div class="time-axis"><div class="axis-label">Project · finish</div>${axis}</div>${rows||'<p class="queue-empty">No scheduled items match this view.</p>'}</div>`;
+    document.getElementById('timelineNote').textContent=(totalDays>180?'Showing the first 180 days. ':'')+'Scroll sideways for later dates. Weekly totals include all lanes; this week counts remaining days, including today.';
   }
-  function countWork(a, b) { let n = 0; const d = new Date(a); d.setHours(0,0,0,0); const e = new Date(b); e.setHours(0,0,0,0); while (d <= e) { if (isWork(d)) n++; d.setDate(d.getDate()+1); } return n; }
-  const maxD = (a,b) => a > b ? a : b, minD = (a,b) => a < b ? a : b;
-  const sameDay = (a,b) => a.toDateString() === b.toDateString();
-
   /* ---------- actions ---------- */
-  function toggleDone(id) { const it = state.items.find(i => i.id === id); if (!it) return; it.s = it.s === 'done' ? 'active' : 'done'; save(); render(); }
-  function move(id, dir) {
-    const i = state.items.findIndex(x => x.id === id); const j = i + dir;
-    if (i < 0 || j < 0 || j >= state.items.length) return;
-    [state.items[i], state.items[j]] = [state.items[j], state.items[i]]; save(); render();
-  }
-  function reorder(fromId, toId) {
-    const from = state.items.findIndex(x => x.id === fromId), to = state.items.findIndex(x => x.id === toId);
-    if (from < 0 || to < 0) return;
-    const [it] = state.items.splice(from, 1); state.items.splice(to, 0, it); save(); render();
-  }
+  let undoSnapshot=null,undoFresh=false;
+  function remember(message){undoSnapshot=JSON.stringify(stripOpen());undoFresh=true;document.getElementById('undoText').textContent=message;document.getElementById('undoToast').hidden=false;}
+  function toggleDone(id){const it=state.items.find(i=>i.id===id);if(!it)return;remember(it.s==='done'?'Project reopened':'Project completed');if(it.s==='done')it.s=it.previousStatus||'active';else{it.previousStatus=it.s;it.s='done';}save();render();}
+  function move(id,dir){const it=state.items.find(i=>i.id===id),list=visibleItems().filter(i=>groupOf(i)===groupOf(it)),n=list.findIndex(i=>i.id===id),other=list[n+dir];if(!other)return;const a=state.items.indexOf(it),b=state.items.indexOf(other);[state.items[a],state.items[b]]=[state.items[b],state.items[a]];save();render();}
+  function reorder(fromId,toId){const from=state.items.findIndex(i=>i.id===fromId),to=state.items.findIndex(i=>i.id===toId);if(from<0||to<0)return;const [it]=state.items.splice(from,1);state.items.splice(to,0,it);save();render();}
 
   /* ---------- wiring ---------- */
-  document.getElementById('hpd').oninput = e => { state.hpd = parseFloat(e.target.value) || 8; save(); render(); };
+  document.getElementById('hpd').onchange = e => { state.hpd = Math.min(16,Math.max(1,parseFloat(e.target.value)||8)); save(); render(); };
+  document.getElementById('undo').onclick=()=>{if(!undoSnapshot)return;state={...JSON.parse(undoSnapshot),open:null};undoSnapshot=null;document.getElementById('undoToast').hidden=true;save();render();};
+  document.getElementById('pipeline').onchange=e=>{state.pipeline=e.target.checked;save();render();};
+  document.getElementById('quick').onchange=e=>{state.quick=e.target.checked;state.open=null;save();render();};
+  document.getElementById('dayStart').onchange=e=>{state.dayStart=e.target.value||'09:00';save();render();};
   document.getElementById('wknd').onchange = e => { state.wknd = e.target.checked; save(); render(); };
   document.getElementById('add').onclick = () => {
     const it = { id: uid(), t: 'New item', c: '', l: state.filter === 'all' ? 'render' : state.filter, h: 0, s: 'active', n: '' };
-    state.items.push(it); state.open = it.id; save(); render();
+    if(state.quick)it.h=0.25;state.items.push(it); state.open = it.id; save(); render();
     const ed = document.querySelector('.editor'); if (ed) { ed.scrollIntoView({ block: 'center' }); const f = ed.querySelector('[data-f="t"]'); if (f) { f.focus(); f.select(); } }
   };
   function exportJSON() {
@@ -904,7 +907,7 @@
     const rd = new FileReader();
     rd.onload = () => {
       try { const j = JSON.parse(rd.result); if (!Array.isArray(j.items)) throw 0;
-        state = { ...state, ...j, open: null }; migrate(); save(); render(); setStatus('Imported ' + file.name + '.');
+        remember('Imported list'); state = { ...state, ...j, open: null }; migrate(); save(); render(); setStatus('Imported ' + file.name + '.');
         document.getElementById('hpd').value = state.hpd; document.getElementById('wknd').checked = !!state.wknd;
         document.querySelectorAll('.chip').forEach(c => c.classList.toggle('on', c.dataset.lane === state.filter));
       } catch (e) { setStatus('That file is not a Runway export.'); }
@@ -913,10 +916,12 @@
   }
   function exportHTML() {
     const items = state.items.map(({ id, ...rest }) => rest);
-    const seedText = 'const SEED = ' + JSON.stringify(items, null, 2).replace(/\n/g, '\n  ') + ';';
+    const seedText = 'const SEED = ' + JSON.stringify(items, null, 2).replace(/</g, '\\u003c').replace(/\n/g, '\n  ') + ';';
     if (!/const SEED = \[[\s\S]*?\];/.test(TEMPLATE)) { setStatus('Could not build the HTML export.'); return; }
+    const snapshot = 'const EXPORTED_STATE = ' + JSON.stringify(stripOpen()).replace(/</g, '\\u003c') + ';';
     const html = TEMPLATE
-      .replace(/const SEED = \[[\s\S]*?\];/, seedText)
+      .replace(/\/\* EXPORT_STATE \*\/[\s\S]*?\/\* END_EXPORT_STATE \*\//, () => '/* EXPORT_STATE */' + snapshot + '/* END_EXPORT_STATE */')
+      .replace(/const SEED = \[[\s\S]*?\];/, () => seedText)
       .replace(/let state = \{ items: \[\], hpd: [^,]+, wknd: [^,]+,/, `let state = { items: [], hpd: ${+state.hpd || 8}, wknd: ${!!state.wknd},`);
     const blob = new Blob([html], { type: 'text/html' });
     const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
@@ -935,7 +940,7 @@
     try {
       await checkRepo();
       const remote = await pull();
-      if (remote && Array.isArray(remote.items) && remote.items.length) {
+      if (remote && Array.isArray(remote.items)) {
         if (confirm('A list already exists on GitHub. Load it here and replace this browser\'s copy?')) {
           state = { ...state, ...remote, open: null }; migrate(); await store.set(KEY, JSON.stringify(stripOpen())); render();
           document.getElementById('hpd').value = state.hpd; document.getElementById('wknd').checked = !!state.wknd;
@@ -961,7 +966,7 @@
     document.getElementById('syncToken').value = ''; setSync('Disconnected. Your list stays in this browser.');
   };
 
-  document.getElementById('reset').onclick = () => { if (confirm('Replace the current list with your original priority list? This clears your edits.')) { state.items = seed(); state.open = null; save(); render(); } };
+  document.getElementById('reset').onclick = () => { if (confirm('Replace the current list with your original priority list? This clears your edits.')) { remember('List reset'); state.items = seed(); migrate(); state.open = null; save(); render(); } };
   document.getElementById('filters').addEventListener('click', e => {
     const b = e.target.closest('.chip'); if (!b) return;
     state.filter = b.dataset.lane;
