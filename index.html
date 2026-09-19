@@ -307,68 +307,12 @@
 
   const SEED = [
     {
-        "t": "Smith / Hannibal NY",
-        "c": "Mike Johnson",
-        "l": "render",
-        "h": 16,
-        "s": "active",
-        "n": "URGENT: holding up their pool installation. Elevations in hand. Get the pool placement and layout out first. Deposit invoice goes out alongside the work."
-    },
-    {
-        "t": "GSG testimonial, Friday 3:30",
-        "c": "GSG / Chris Savage",
-        "l": "video",
-        "h": 4,
-        "s": "active",
-        "n": "Audio settled: MKE 600 primary, DJI Mic Mini safety. Interview only."
-    },
-    {
-        "t": "Kalil / Stoney Pond",
-        "c": "Mike Johnson",
-        "l": "render",
-        "h": 16,
-        "s": "active",
-        "n": "Mike is waiting on you. Refine after his green-light on the rotated pool and pavilion."
-    },
-    {
-        "t": "Morena",
-        "c": "Jason Zullo",
-        "l": "render",
-        "h": 16,
-        "s": "active",
-        "n": "Paid. Jason sent the house and materials photos. Ready to build, right behind Smith."
-    },
-    {
-        "t": "Doukas redesign",
-        "c": "Konstantinos Doukas",
-        "l": "render",
-        "h": 24,
-        "s": "active",
-        "n": "Deposit paid. Pavilion style first for feedback, then layout, then renders."
-    },
-    {
         "t": "Singh Brothers revisions",
         "c": "PJE / Shea",
         "l": "render",
-        "h": 16,
+        "h": 8,
         "s": "active",
-        "n": "Committed to Shea for next week."
-    },
-    {
-        "t": "Kuchik revision round",
-        "c": "PJE / Shea",
-        "l": "render",
-        "h": 24,
-        "s": "active",
-        "n": "Right after Singh. CAD 09-01 and change list in hand."
-    },
-    {
-        "t": "Surak finals",
-        "c": "Goldberg",
-        "l": "render",
-        "h": 16,
-        "s": "active",
-        "n": ""
+        "n": "Revisions done in SketchUp. Adjust plantings, then render in Max."
     },
     {
         "t": "Green Boston",
@@ -376,15 +320,79 @@
         "l": "render",
         "h": 24,
         "s": "active",
-        "n": "Final plan in hand, ready to build."
+        "n": "Next up after Singh."
+    },
+    {
+        "t": "Surak finals",
+        "c": "Goldberg",
+        "l": "render",
+        "h": 16,
+        "s": "active",
+        "n": "After Green."
+    },
+    {
+        "t": "Morena",
+        "c": "Jason Zullo",
+        "l": "render",
+        "h": 16,
+        "s": "active",
+        "n": "Paid, materials in hand. After Surak."
+    },
+    {
+        "t": "Kuchik revision round",
+        "c": "PJE / Shea",
+        "l": "render",
+        "h": 24,
+        "s": "active",
+        "n": "CAD 09-01 and change list in hand. After Morena."
+    },
+    {
+        "t": "Bowman",
+        "c": "Goldberg",
+        "l": "render",
+        "h": 16,
+        "s": "waiting",
+        "n": "House modeled. Waiting on materials before plantings and render."
+    },
+    {
+        "t": "Smith / Hannibal NY",
+        "c": "Mike Johnson",
+        "l": "render",
+        "h": 16,
+        "s": "done",
+        "n": "Done and approved."
+    },
+    {
+        "t": "GSG testimonial, Friday 3:30",
+        "c": "GSG / Chris Savage",
+        "l": "video",
+        "h": 4,
+        "s": "done",
+        "n": "Shot and edited."
+    },
+    {
+        "t": "Kalil / Stoney Pond",
+        "c": "Mike Johnson",
+        "l": "render",
+        "h": 12,
+        "s": "waiting",
+        "n": "Prelims done. Waiting on approval before designing the plantings."
+    },
+    {
+        "t": "Doukas redesign",
+        "c": "Konstantinos Doukas",
+        "l": "render",
+        "h": 16,
+        "s": "waiting",
+        "n": "Pavilion design in its second revision, sent. Waiting on approval before designing the plantings."
     },
     {
         "t": "R50 Chatham interiors + 2 exteriors",
         "c": "Lyndsay Padgett",
         "l": "render",
-        "h": 40,
-        "s": "waiting",
-        "n": "Waiting on her reference direction and the two exterior plans. Nudge her."
+        "h": 28,
+        "s": "active",
+        "n": "Interiors done, ready to send for approval. Then the 2 exteriors."
     },
     {
         "t": "Chisholm invoice",
@@ -406,9 +414,9 @@
         "t": "Frecon orchard, phase 2",
         "c": "Frecon Farms",
         "l": "video",
-        "h": 28,
+        "h": 20,
         "s": "active",
-        "n": "Started. First orchard shoot done and invoiced, reel delivered next morning. Rest of Phase 2 and Phase 3 still to scope and price."
+        "n": "Orchard reel and packhouse production video (apples) both delivered. Rest of Phase 2 and Phase 3 still to scope and price."
     },
     {
         "t": "Shower Kings marketing retainer",
@@ -578,6 +586,22 @@
         "s": "active",
         "next": "Send availability once runway opens up.",
         "n": "Confirmed opportunity after an hour-long conversation. Real estate outsourcing and collaboration work. He is waiting for my schedule to open up; clear existing runway before scheduling. Hours and start date not yet set."
+    },
+    {
+        "t": "Johnson unbilled backlog",
+        "c": "Mike Johnson",
+        "l": "admin",
+        "h": 0.5,
+        "s": "active",
+        "n": "Reconcile and send."
+    },
+    {
+        "t": "List the Mini 3",
+        "c": "Gear",
+        "l": "admin",
+        "h": 0.5,
+        "s": "active",
+        "n": "Recoup cash."
     }
 ];
 
@@ -605,8 +629,29 @@
     state.listUpdate20260911 = true;
     return true;
   }
+  function applySeptember18Update() {
+    if (state.projectUpdate20260918) return false;
+    const changes = [{"t": "Smith / Hannibal NY", "s": "done", "n": "Done and approved."}, {"t": "Doukas redesign", "s": "waiting", "h": 16, "n": "Pavilion design in its second revision, sent. Waiting on approval before designing the plantings."}, {"t": "Kalil / Stoney Pond", "s": "waiting", "h": 12, "n": "Prelims done. Waiting on approval before designing the plantings."}, {"t": "R50 Chatham interiors + 2 exteriors", "s": "active", "h": 28, "n": "Interiors done, ready to send for approval. Then the 2 exteriors."}, {"t": "Singh Brothers revisions", "s": "active", "h": 8, "top": true, "n": "Revisions done in SketchUp. Adjust plantings, then render in Max."}, {"t": "Green Boston", "s": "active", "after": "Singh Brothers revisions", "n": "Next up after Singh."}, {"t": "Surak finals", "s": "active", "after": "Green Boston", "n": "After Green."}, {"t": "Morena", "s": "active", "after": "Surak finals", "n": "Paid, materials in hand. After Surak."}, {"t": "Kuchik revision round", "s": "active", "after": "Morena", "n": "CAD 09-01 and change list in hand. After Morena."}, {"t": "Bowman", "add": true, "c": "Goldberg", "l": "render", "h": 16, "s": "waiting", "after": "Kuchik revision round", "n": "House modeled. Waiting on materials before plantings and render."}, {"t": "Frecon orchard, phase 2", "s": "active", "h": 20, "n": "Orchard reel and packhouse production video (apples) both delivered. Rest of Phase 2 and Phase 3 still to scope and price."}, {"t": "GSG testimonial, Friday 3:30", "s": "done", "n": "Shot and edited."}, {"t": "Johnson unbilled backlog", "c": "Mike Johnson", "l": "admin", "h": 0.5, "s": "active", "n": "Reconcile and send.", "add": true}, {"t": "List the Mini 3", "c": "Gear", "l": "admin", "h": 0.5, "s": "active", "n": "Recoup cash.", "add": true}];
+    const norm = t => String(t || '').trim().toLowerCase();
+    for (const c of changes) {
+      let it = state.items.find(x => norm(x.t) === norm(c.t));
+      if (!it) {
+        if (!c.add) continue;
+        it = {id:uid(),t:c.t,c:'',l:'render',h:0,s:'active',n:''}; state.items.push(it);
+      }
+      for (const k of ['s','h','n','c','l']) if (c[k] !== undefined) it[k]=c[k];
+      if (c.top) { state.items.splice(state.items.indexOf(it),1); state.items.unshift(it); }
+      else if (c.after) {
+        const other=state.items.find(x=>norm(x.t)===norm(c.after));
+        if (other && other!==it) {state.items.splice(state.items.indexOf(it),1);state.items.splice(state.items.indexOf(other)+1,0,it);}
+      }
+    }
+    state.projectUpdate20260918=true;
+    return true;
+  }
   function migrate() {
-    const listUpdated = applyRequestedListUpdate();
+    const earlierUpdate = applyRequestedListUpdate();
+    const listUpdated = applySeptember18Update() || earlierUpdate;
     state.hpd = Math.min(16, Math.max(1, Number(state.hpd) || 8));
     state.dayStart = /^([01]\d|2[0-3]):[0-5]\d$/.test(state.dayStart || '') ? state.dayStart : '09:00';
     state.filter = ['all','render','video','admin','lead','tools'].includes(state.filter) ? state.filter : 'all';
